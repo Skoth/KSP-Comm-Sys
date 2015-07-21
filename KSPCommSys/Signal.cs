@@ -1,25 +1,40 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 namespace KSPCommSys
 {
-    public class Complex
+    [KSPAddon(KSPAddon.Startup.EditorAny, false)]
+    public class Complex : MonoBehaviour
     {
-        public double a { get; set; }
-        public double b { get; set; }
-        public double Magnitude {
-            get {
-                return Math.Sqrt(a*a + b*b);
+        public void Awake()
+        {
+            CommSysLog.Log("Complex Awake() called");
+        }
+
+        public void Start()
+        {
+            CommSysLog.Log("Complex Start() called");
+        }
+
+        public float a { get; set; }
+        public float b { get; set; }
+        public float Magnitude
+        {
+            get
+            {
+                return Mathf.Sqrt(a * a + b * b);
             }
         }
-        public double Phase
+        public float Phase
         {
             get
             {
                 // If non-zero, compute value, otherwise throw non-real exception
-                if (!(Math.Abs(b) < 0.001))
-                    return Math.Atan2(a, b);
+                if (!(Mathf.Abs(a) < 0.001))
+                    return Mathf.Atan2(a, b);
                 else
                     throw new Exception();
             }
@@ -29,19 +44,72 @@ namespace KSPCommSys
 
     public class Signal
     {
-        private List<double> x;
-        private List<double> t;
-        public Signal() : this(x => x, 0d, 99d, 1d) { }
-        public Signal(Func<double, double> f_t, double start, double end, double step)
+        private List<float> x;
+        private List<float> t;
+        private Func<float, float> expression;
+        public int Size { get; set; }
+
+        public Signal() : this(x => x, 0f, 99f, 1f) { }
+        public Signal(Func<float, float> f_t) : this(f_t, 0f, 99f, 1f) { }
+        public Signal(Func<float, float> f_t, float start, float stop) : this(f_t, start, stop, 1f) { }
+        public Signal(Func<float, float> f_t, float start, float end, float step)
         {
-            t = Enumerable.Range((int)start, (int)end).Select(f => (double)f).ToList<double>();
-            x = t.Select(f_t).ToList<double>();
+            expression = f_t;
+            t = Enumerable.Range((int)start, (int)end).Select(f => (float)f).ToList<float>();
+            x = t.Select(f_t).ToList<float>();
+            Size = x.Count;
         }
 
-        private Signal FFT() {
+        // Indexer
+        public float this[int i]
+        {
+            get
+            {
+                return x[i];
+            }
+            set
+            {
+                x[i] = value;
+            }
+        }
 
+        public void DisplaySignal()
+        {
+            string strSignal = "{ ";
+            int i = 0;
+            for (; i < Size - 1; ++i)
+            {
+                // Temp log resolver
+                if (i % 4 == 0)
+                {
+                    CommSysLog.Log(strSignal);
+                    strSignal = String.Empty;
+                }
+                strSignal += "(" + i.ToString() + ":" + x[i].ToString() + "), ";
+            }
+            strSignal += "(" + i + ":" + x[i].ToString() + ") }";
 
+            CommSysLog.Log(strSignal);
+        }
+
+        private Signal FFT()
+        {
+            // TODO: implement basic FFT test
             return new Signal();
+        }
+    }
+
+    public static class Channel
+    {
+        public static Signal AdditiveNoise(Signal x)
+        {
+            Signal y = new Signal();
+
+            for (int i = 0; i < x.Size; ++i)
+            {
+                y[i] = x[i] + UnityEngine.Random.value;
+            }
+            return y;
         }
     }
 }

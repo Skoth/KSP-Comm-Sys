@@ -23,7 +23,8 @@ namespace KSPCommSys
 
         public void FixedUpdate()
         {
-            Debug.Log("@{ FixedUpdate: Custom Part Live }@");
+            CommSysLog.Log("Test Part FixedUpdate()");
+            //Debug.Log("@{ FixedUpdate: Custom Part Live }@");
         }
 
         public override void OnSave(ConfigNode node)
@@ -48,7 +49,7 @@ namespace KSPCommSys
             if (this.vessel == FlightGlobals.ActiveVessel)
             {
                 this.vessel.rigidbody.AddRelativeForce(Vector3.up * 500f * FlightInputHandler.state.mainThrottle);
-                Debug.Log("@{ " + FlightInputHandler.state.mainThrottle.ToString() + " }@");
+                CommSysLog.Log(FlightInputHandler.state.mainThrottle.ToString());
             }
         }
 
@@ -57,7 +58,7 @@ namespace KSPCommSys
             // if the current vessel is the same as the one the part is on
             if (this.vessel == FlightGlobals.ActiveVessel && this.part.IsPrimary(this.vessel.parts, this.ClassID))
             { 
-                windowPosition = GUILayout.Window(10, windowPosition, OnWindow, "This is a title", windowStyle);
+                windowPosition = GUILayout.Window(10, windowPosition, OnWindow, "Noise Profile", windowStyle);
 
                 if (windowPosition.x == 0f && windowPosition.y == 0f)
                     windowPosition = windowPosition.CenterScreen();
@@ -67,7 +68,7 @@ namespace KSPCommSys
         private void OnWindow(int windowId)
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label("This is a label", labelStyle);
+            GUILayout.Label("", labelStyle);
             GUILayout.EndHorizontal();
 
             GUI.DragWindow();
