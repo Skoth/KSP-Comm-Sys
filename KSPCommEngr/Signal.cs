@@ -71,20 +71,19 @@ namespace KSPCommSys
 
     public class Signal
     {
-        private List<float> x;
-        private List<float> t;
+        private float[] x;
+        private float[] t;
         private Func<float, float> expression;
         public int Size { get; set; }
 
-        public Signal() : this(x => x, 0f, 99f, 1f) { }
-        public Signal(Func<float, float> f_t) : this(f_t, 0f, 99f, 1f) { }
+        public Signal() : this(x => x, 0f, 127f, 1f) { }
+        public Signal(Func<float, float> f_t) : this(f_t, 0f, 127f, 1f) { }
         public Signal(Func<float, float> f_t, float start, float stop) : this(f_t, start, stop, 1f) { }
         public Signal(Func<float, float> f_t, float start, float end, float step)
         {
-            expression = f_t;
-            t = Enumerable.Range((int)start, (int)end).Select(f => (float)f).ToList<float>();
-            x = t.Select(f_t).ToList<float>();
-            Size = x.Count;
+            Size = (int)Mathf.Floor((end - start) / step + 1f);
+            t = Enumerable.Range(1, Size).Select(i => start + (i - 1)*step).ToArray<float>();
+            x = t.Select(f_t).ToArray<float>();
         }
 
         // Indexer
