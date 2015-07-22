@@ -38,7 +38,7 @@ namespace KSPCommSys
         Warning
     }
 
-    public static class CommSysLog
+    public static class CommEngrLog
     {
         private static string Tag = "[i~ {Communications Engineering} ~i]: ";
 

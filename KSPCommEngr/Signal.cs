@@ -38,12 +38,12 @@ namespace KSPCommSys
     {
         public void Awake()
         {
-            CommSysLog.Log("Complex Awake() called");
+            CommEngrLog.Log("Complex Awake() called");
         }
 
         public void Start()
         {
-            CommSysLog.Log("Complex Start() called");
+            CommEngrLog.Log("Complex Start() called");
         }
 
         public float a { get; set; }
@@ -108,14 +108,14 @@ namespace KSPCommSys
                 // Temp log resolver
                 if (i % 4 == 0)
                 {
-                    CommSysLog.Log(strSignal);
+                    CommEngrLog.Log(strSignal);
                     strSignal = String.Empty;
                 }
                 strSignal += "(" + i.ToString() + ":" + x[i].ToString() + "), ";
             }
             strSignal += "(" + i + ":" + x[i].ToString() + ") }";
 
-            CommSysLog.Log(strSignal);
+            CommEngrLog.Log(strSignal);
         }
 
         private Signal FFT()

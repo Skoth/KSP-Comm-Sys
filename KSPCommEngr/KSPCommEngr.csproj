@@ -50,7 +50,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommSysLog.cs" />
+    <Compile Include="CommEngrLog.cs" />
     <Compile Include="Extensions\PartExtensions.cs" />
     <Compile Include="Extensions\RectExtensions.cs" />
     <Compile Include="FrequencyAllocation.cs" />

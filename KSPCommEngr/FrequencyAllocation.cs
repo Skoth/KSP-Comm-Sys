@@ -40,19 +40,19 @@ namespace KSPCommSys
         private bool hasInitStyles = false;
 
         public void Awake() {
-            CommSysLog.Log("Frequency Allocation MonoBehaviour Activated");
+            CommEngrLog.Log("Frequency Allocation MonoBehaviour Activated");
         }
 
         public void Start()
         {
             // Signal tests with sinusoid
             Signal q = new Signal(x => Mathf.Sin(x));
-            CommSysLog.Log("Frequency Allocation - Sine Signal generated; displayed next:");
+            CommEngrLog.Log("Frequency Allocation - Sine Signal generated; displayed next:");
             q.DisplaySignal();
 
             // Test channel noise distortion
             q = Channel.AdditiveNoise(q);
-            CommSysLog.Log("Frequency Allocation - Channel Noise added to Signal ; displayed next:");
+            CommEngrLog.Log("Frequency Allocation - Channel Noise added to Signal ; displayed next:");
             q.DisplaySignal();
 
             if (!hasInitStyles) InitStyles();

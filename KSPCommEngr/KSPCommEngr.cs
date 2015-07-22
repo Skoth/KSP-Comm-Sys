@@ -50,7 +50,7 @@ namespace KSPCommSys
 
         public void FixedUpdate()
         {
-            CommSysLog.Log("Test Part FixedUpdate()");
+            CommEngrLog.Log("Test Part FixedUpdate()");
             //Debug.Log("@{ FixedUpdate: Custom Part Live }@");
         }
 
@@ -76,7 +76,7 @@ namespace KSPCommSys
             if (this.vessel == FlightGlobals.ActiveVessel)
             {
                 this.vessel.rigidbody.AddRelativeForce(Vector3.up * 500f * FlightInputHandler.state.mainThrottle);
-                CommSysLog.Log(FlightInputHandler.state.mainThrottle.ToString());
+                CommEngrLog.Log(FlightInputHandler.state.mainThrottle.ToString());
             }
         }
 
