@@ -26,14 +26,14 @@
 #endregion
 
 using UnityEngine;
-using KSPCommSys.Extensions;
+using KSPCommEngr.Extensions;
 using KSP.IO; // namespace for where the plugin configuration class is kept
 
 // Code inspired by Cybutek's YouTube tutorials: https://www.youtube.com/watch?v=ilWZjYx7brE
 
-namespace KSPCommSys
+namespace KSPCommEngr
 {
-    public class KSPCommEngr : PartModule
+    public class AntennaPrototype : PartModule
     {
         private static Rect windowPosition = new Rect();
         private GUIStyle windowStyle, labelStyle;
@@ -46,17 +46,18 @@ namespace KSPCommSys
                 if (!hasInitStyles) InitStyles();
                 RenderingManager.AddToPostDrawQueue(0, OnDraw);
             }
+            CommEngrLog.Log("Antenna Prototype OnStart()");
         }
 
         public void FixedUpdate()
         {
-            CommEngrLog.Log("Test Part FixedUpdate()");
+            //CommEngrLog.Log("Test Part FixedUpdate()");
             //Debug.Log("@{ FixedUpdate: Custom Part Live }@");
         }
 
         public override void OnSave(ConfigNode node)
         {
-            PluginConfiguration config = PluginConfiguration.CreateForType<KSPCommEngr>();
+            PluginConfiguration config = PluginConfiguration.CreateForType<AntennaPrototype>();
 
             config.SetValue("Window Position", windowPosition);
             config.save();
@@ -64,7 +65,7 @@ namespace KSPCommSys
 
         public override void OnLoad(ConfigNode node)
         {
-            PluginConfiguration config = PluginConfiguration.CreateForType<KSPCommEngr>();
+            PluginConfiguration config = PluginConfiguration.CreateForType<AntennaPrototype>();
 
             config.load();
             windowPosition = config.GetValue<Rect>("Window Position");
