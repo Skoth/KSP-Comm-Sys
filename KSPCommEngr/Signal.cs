@@ -31,7 +31,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace KSPCommSys
+namespace KSPCommEngr
 {
     [KSPAddon(KSPAddon.Startup.EditorAny, false)]
     public class Complex : MonoBehaviour
@@ -71,19 +71,20 @@ namespace KSPCommSys
 
     public class Signal
     {
-        private float[] x;
+        public float[] x { get; set; }
         private float[] t;
-        private Func<float, float> expression;
+        private Func<float, float> x_t;
         public int Size { get; set; }
 
         public Signal() : this(x => x, 0f, 127f, 1f) { }
-        public Signal(Func<float, float> f_t) : this(f_t, 0f, 127f, 1f) { }
-        public Signal(Func<float, float> f_t, float start, float stop) : this(f_t, start, stop, 1f) { }
-        public Signal(Func<float, float> f_t, float start, float end, float step)
+        public Signal(Func<float, float> expression) : this(expression, 0f, 127f, 1f) { }
+        public Signal(Func<float, float> expression, float start, float stop) : this(expression, start, stop, 1f) { }
+        public Signal(Func<float, float> expression, float start, float end, float step)
         {
+            x_t = expression;
             Size = (int)Mathf.Floor((end - start) / step + 1f);
             t = Enumerable.Range(1, Size).Select(i => start + (i - 1)*step).ToArray<float>();
-            x = t.Select(f_t).ToArray<float>();
+            x = t.Select(x_t).ToArray<float>();
         }
 
         // Indexer
