@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace KSPCommSys.Extensions
+namespace KSPCommEngr.Extensions
 {
     public static class PartExtensions
     {
