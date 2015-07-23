@@ -28,7 +28,7 @@
 using System;
 using UnityEngine;
 
-namespace KSPCommSys
+namespace KSPCommEngr
 {
     public enum LogType
     {
