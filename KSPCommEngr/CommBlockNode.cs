@@ -28,6 +28,7 @@
 using System;
 using UnityEngine;
 using KSP;
+using KSPCommEngr.Extensions;
 
 namespace KSPCommEngr
 {
@@ -45,16 +46,16 @@ namespace KSPCommEngr
 
     public enum nodeFaces
     {
-        BandpassFilter = "^",
-        DataSource = "U",
-        HighpassFilter = "/",
-        LocalOscillator = "~",
-        LowpassFilter = "\\",
-        Multiplier = "X"
+        BandpassFilter,
+        DataSource,
+        HighpassFilter,
+        LocalOscillator,
+        LowpassFilter,
+        Multiplier
     }
 
     [KSPAddon(KSPAddon.Startup.EditorAny, false)]
-    public class CommBlockNode : MonoBehaviour
+    public class CommBlockNode : MonoBehaviour 
     {
         public CommLinkNode topLink { get; set; }
         public CommLinkNode rightLink { get; set; }
@@ -63,11 +64,18 @@ namespace KSPCommEngr
         public Rect nodePosition;
         public Texture2D nodeFace; // icon
 
-        public CommBlockNode(string nf = nodeFaces.LocalOscillator)
+        public CommBlockNode(string nodeFace = "")
         {
+            
+            if (nodeFace.Equals(string.Empty))
+            {
 
+            }
+            nodePosition = new Rect(0, 0, 300, 300);
+            nodePosition = nodePosition.CenterScreen();
+            
         }
-
+        
         public void SetVisibility()
         {
 
