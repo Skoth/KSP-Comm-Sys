@@ -78,6 +78,35 @@ namespace KSPCommEngr
                 windowPosition = windowPosition.CenterScreen();
         }
 
+        public void OnGUI() 
+        {
+            // Test examples for Legacy GUI Scripting Guide: http://docs.unity3d.com/Manual/gui-Basics.html
+            // Note: only windows are draggable; they act as containers of controls--hence
+            // the following elements are un-draggable controls absolutely positioned
+            GUI.Box(new Rect(400, 400, 100, 135), "Context Menu");
+
+            // Test: GUI.Button created outside if?
+            GUIElement
+
+            if (GUI.Button(new Rect(410, 430, 80, 20), "Allocate new frequency band channel"))
+            {
+                CommEngrLog.Log("Allocating a new frequency band for channel...");
+            }
+
+            if (GUI.Button(new Rect(420, 460, 80, 20), "Display existing channels"))
+            {
+                CommEngrLog.Log("Displaying existing channels...");
+            }
+
+            if (Time.time % 2 < 1)
+            {
+                if (GUI.Button(new Rect(430, 490, 200, 20), "Meet the flashing button"))
+                {
+                    CommEngrLog.Log("You clicked me!");
+                }
+            }
+        }
+
         private void OnWindow(int windowId)
         {
             GUILayout.BeginVertical();
