@@ -54,13 +54,12 @@ namespace KSPCommEngr
         Multiplier
     }
 
-    [KSPAddon(KSPAddon.Startup.EditorAny, false)]
-    public class CommBlockNode : MonoBehaviour 
+    public class CommBlockNode
     {
-        public CommLinkNode topLink { get; set; }
-        public CommLinkNode rightLink { get; set; }
-        public CommLinkNode bottomLink { get; set; }
-        public CommLinkNode leftLink { get; set; }
+        public CommConnectorNode topLink { get; set; }
+        public CommConnectorNode rightLink { get; set; }
+        public CommConnectorNode bottomLink { get; set; }
+        public CommConnectorNode leftLink { get; set; }
         public Rect nodePosition;
         public Texture2D nodeFace; // icon
 
@@ -80,10 +79,5 @@ namespace KSPCommEngr
         {
 
         }
-    }
-
-    public class CommLinkNode
-    {
-
     }
 }

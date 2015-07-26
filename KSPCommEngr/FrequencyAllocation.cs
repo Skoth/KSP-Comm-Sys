@@ -30,6 +30,7 @@ using System.Collections;
 using KSPCommEngr.Extensions;
 using KSP.IO;
 using System.Linq;
+using System;
 
 namespace KSPCommEngr
 {
@@ -40,6 +41,8 @@ namespace KSPCommEngr
         private GUIStyle windowStyle, labelStyle;
         private bool hasInitStyles = false;
         public Texture2D image = new Texture2D(400, 100); //400 pixels wide by 100 pixels tall
+        private Texture2D iconImg = new Texture2D(30, 30);
+        private byte[] iconImgData;
 
         public void Awake()
         {
@@ -48,6 +51,20 @@ namespace KSPCommEngr
 
         public void Start()
         {
+            try {
+                if (File.Exists<File>("smiley.png"))
+                {
+                    CommEngrLog.Log("smiley.png found!");
+                    iconImg.LoadImage(File.ReadAllBytes<File>("smiley.png"));
+                }
+                else
+                {
+                    CommEngrLog.Log("smiley.png not found!");
+                }
+            } catch(Exception ex) {
+                CommEngrLog.Log(ex.Message, LogType.Exception);
+            }
+
             // Signal tests with sinusoid
             Signal q = new Signal(x => Mathf.Sin(x));
             CommEngrLog.Log("Frequency Allocation - Sine Signal generated.");
@@ -66,7 +83,7 @@ namespace KSPCommEngr
 
         public void Update()
         {
-            //CommSysLog.Log("Mouse position (" + Mouse.screenPos.x.ToString() + ", " + Mouse.screenPos.y.ToString() + ")");
+
         }
 
         private void OnDraw()
@@ -85,9 +102,6 @@ namespace KSPCommEngr
             // the following elements are un-draggable controls absolutely positioned
             GUI.Box(new Rect(400, 400, 100, 135), "Context Menu");
 
-            // Test: GUI.Button created outside if?
-            GUIElement
-
             if (GUI.Button(new Rect(410, 430, 80, 20), "Allocate new frequency band channel"))
             {
                 CommEngrLog.Log("Allocating a new frequency band for channel...");
@@ -104,6 +118,10 @@ namespace KSPCommEngr
                 {
                     CommEngrLog.Log("You clicked me!");
                 }
+            }
+            if (GUI.changed)
+            {
+                CommEngrLog.Log("Change!");
             }
         }
 
