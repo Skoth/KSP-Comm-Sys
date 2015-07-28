@@ -54,28 +54,34 @@ namespace KSPCommEngr
         Multiplier
     }
 
-    public class CommBlockNode
+    public class CommBlockNode : MonoBehaviour
     {
         public CommConnectorNode topLink { get; set; }
         public CommConnectorNode rightLink { get; set; }
         public CommConnectorNode bottomLink { get; set; }
         public CommConnectorNode leftLink { get; set; }
-        public Rect nodePosition;
+        public Rect nodePosition = new Rect();
+        public Rect windowRect = new Rect();
         public Texture2D nodeFace; // icon
 
-        public CommBlockNode(string nodeFace = "")
+        public void Awake()
         {
-            
-            if (nodeFace.Equals(string.Empty))
-            {
 
-            }
-            nodePosition = new Rect(0, 0, 300, 300);
-            nodePosition = nodePosition.CenterScreen();
-            
+        }
+
+        public void Start()
+        {
+            windowRect = GUILayout.Window(0, windowRect, OnWindow, "", style: GUIStyle.none);
+            GUI.Box(windowRect, "Window Title?", new GUIStyle(HighLogic.Skin.window));
+            GUILayout.Button("This appears to be drawn on top of the window!");
         }
         
         public void SetVisibility()
+        {
+
+        }
+
+        private void OnWindow(int id)
         {
 
         }

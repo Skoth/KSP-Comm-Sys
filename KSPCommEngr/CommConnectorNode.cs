@@ -3,7 +3,7 @@ using KSP;
 
 namespace KSPCommEngr
 {
-    public class CommConnectorNode
+    public class CommConnectorNode : MonoBehaviour
     {
         public enum States
         {
@@ -17,6 +17,7 @@ namespace KSPCommEngr
             Bottom,
             Left
         }
+
         public Rect currentPosition { get; set; }
         public Rect nodePosition
         {

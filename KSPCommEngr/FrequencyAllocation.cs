@@ -38,11 +38,13 @@ namespace KSPCommEngr
     public class FrequencyAllocation : MonoBehaviour
     {
         private static Rect windowPosition = new Rect();
+        private static Rect windowPos2 = new Rect();
         private GUIStyle windowStyle, labelStyle;
         private bool hasInitStyles = false;
         public Texture2D image = new Texture2D(400, 100); //400 pixels wide by 100 pixels tall
         private Texture2D iconImg = new Texture2D(30, 30);
         private byte[] iconImgData;
+        private LineRenderer line = null;
 
         public void Awake()
         {
@@ -51,6 +53,20 @@ namespace KSPCommEngr
 
         public void Start()
         {
+
+            line = new GameObject("Line").AddComponent<LineRenderer>();
+            line.transform.parent = transform;
+            line.useWorldSpace = false;
+            line.transform.localPosition = Vector3.zero;
+            line.transform.localEulerAngles = Vector3.zero;
+            line.material = new Material(Shader.Find("Particles/Additive"));
+            line.SetColors(Color.red, Color.yellow);
+            line.SetWidth(3.0f, 0.0f);
+            line.SetVertexCount(2);
+            line.SetPosition(0, Vector3.zero); 
+            //camera.
+            line.SetPosition(1, new Vector3(1.0f, 1.0f, 0.0f) * 2);
+
             try {
                 if (File.Exists<File>("smiley.png"))
                 {
@@ -89,18 +105,19 @@ namespace KSPCommEngr
         private void OnDraw()
         {
 
-            windowPosition = GUILayout.Window(10, windowPosition, OnWindow, "Frequency Allocation Chart", windowStyle);
+            windowPosition = GUILayout.Window(10, windowPosition, OnWindow, "Frequency Allocation Chart", GUIStyle.none);
 
             if (windowPosition.x == 0f && windowPosition.y == 0f)
                 windowPosition = windowPosition.CenterScreen();
         }
 
+        // warning: do NOT test/observe input in OnGUI (reserve that for Update()); OnGUI is called multiple times per frame
         public void OnGUI() 
         {
             // Test examples for Legacy GUI Scripting Guide: http://docs.unity3d.com/Manual/gui-Basics.html
             // Note: only windows are draggable; they act as containers of controls--hence
             // the following elements are un-draggable controls absolutely positioned
-            GUI.Box(new Rect(400, 400, 100, 135), "Context Menu");
+            GUI.Box(new Rect(400, 400, 100, 135), "Box", windowStyle);
 
             if (GUI.Button(new Rect(410, 430, 80, 20), "Allocate new frequency band channel"))
             {
@@ -128,19 +145,26 @@ namespace KSPCommEngr
         private void OnWindow(int windowId)
         {
             GUILayout.BeginVertical();
+                // windowPos2 = GUILayout.Window(11, windowPos2, OnWin2, "Inner Window Test", windowStyle);
                 GUI.DrawTexture(new Rect(10f, 10f, 400f, 100f), image, ScaleMode.StretchToFill);
                 GUILayout.Label("Frequency in Hz", labelStyle);
             GUILayout.EndVertical();
 
             GUI.DragWindow();
         }
+        private void OnWin2(int wId)
+        {
+            GUILayout.BeginHorizontal();
+                GUILayout.Button("Button!");
+            GUILayout.EndHorizontal();
+        }
 
         private void InitStyles()
         {
             windowStyle = new GUIStyle(HighLogic.Skin.window);
-            windowStyle.fixedWidth = 900f;
-            windowStyle.fixedHeight = 900f;
-
+            windowStyle.fixedWidth = 400f;
+            windowStyle.fixedHeight = 400f;
+                
             labelStyle = new GUIStyle(HighLogic.Skin.label);
             labelStyle.stretchWidth = true;
             //labelStyle.DrawCursor
@@ -165,7 +189,7 @@ namespace KSPCommEngr
                 for (int y = fx; y < fx + lineWidth; y++)
                 {
                     image.SetPixel(x, y, Color.red);
-                    CommEngrLog.Log("drawImage() - (" + x.ToString() + ", " + y.ToString() + ")");
+                    //CommEngrLog.Log("drawImage() - (" + x.ToString() + ", " + y.ToString() + ")");
                 }
             }
 
