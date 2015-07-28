@@ -45,6 +45,8 @@ namespace KSPCommEngr
         private Texture2D iconImg = new Texture2D(30, 30);
         private byte[] iconImgData;
         private LineRenderer line = null;
+        private Rect buttonRect = new Rect(440, 520, 80, 20);
+        private bool buttonPressed = false;
 
         public void Awake()
         {
@@ -55,7 +57,9 @@ namespace KSPCommEngr
         {
 
             line = new GameObject("Line").AddComponent<LineRenderer>();
-            line.transform.parent = transform;
+            line.transform.parent = PlanetariumCamera.Camera.transform;
+            line.enabled = true;
+            //line.
             line.useWorldSpace = false;
             line.transform.localPosition = Vector3.zero;
             line.transform.localEulerAngles = Vector3.zero;
@@ -63,9 +67,10 @@ namespace KSPCommEngr
             line.SetColors(Color.red, Color.yellow);
             line.SetWidth(3.0f, 0.0f);
             line.SetVertexCount(2);
-            line.SetPosition(0, Vector3.zero); 
-            //camera.
-            line.SetPosition(1, new Vector3(1.0f, 1.0f, 0.0f) * 2);
+            Vector3 cPos = PlanetariumCamera.Camera.transform.position;
+            line.SetPosition(0, cPos + new Vector3(0.0f, 0.0f, 3.0f)); 
+            line.SetPosition(1, cPos + new Vector3(1.0f, 1.0f, -3.0f) * 2);
+            //ScreenSafeUI
 
             try {
                 if (File.Exists<File>("smiley.png"))
@@ -119,26 +124,49 @@ namespace KSPCommEngr
             // the following elements are un-draggable controls absolutely positioned
             GUI.Box(new Rect(400, 400, 100, 135), "Box", windowStyle);
 
-            if (GUI.Button(new Rect(410, 430, 80, 20), "Allocate new frequency band channel"))
+            if (GUI.Button(new Rect(410, 430, 80, 20), "Hide UI"))
             {
-                CommEngrLog.Log("Allocating a new frequency band for channel...");
+                GameEvents.onHideUI.Fire();
+                //CommEngrLog.Log("Allocating a new frequency band for channel...");
             }
 
-            if (GUI.Button(new Rect(420, 460, 80, 20), "Display existing channels"))
+            if (GUI.Button(new Rect(420, 460, 80, 20), "Show UI"))
             {
-                CommEngrLog.Log("Displaying existing channels...");
+                GameEvents.onShowUI.Fire();
+                //CommEngrLog.Log("Displaying existing channels...");
             }
 
-            if (Time.time % 2 < 1)
+            //if (Time.time % 2 < 1)
+            //{
+            //    if (GUI.Button(new Rect(430, 490, 200, 20), "Meet the flashing button"))
+            //    {
+            //        CommEngrLog.Log("You clicked me!");
+            //    }
+            //}
+
+            // Draggable
+            if(buttonRect.Contains(Event.current.mousePosition))
             {
-                if (GUI.Button(new Rect(430, 490, 200, 20), "Meet the flashing button"))
+                if (Event.current.type == EventType.MouseDown)
                 {
-                    CommEngrLog.Log("You clicked me!");
+                    buttonPressed = true;
+                }
+
+                if (Event.current.type == EventType.MouseUp)
+                {
+                    buttonPressed = false;
+                }
+
+                if (Event.current.type == EventType.MouseDrag)
+                {
+                    buttonRect.x += Event.current.delta.x;
+                    buttonRect.y += Event.current.delta.y;
                 }
             }
-            if (GUI.changed)
+
+            if (GUI.Button(buttonRect, "Draggable?"))
             {
-                CommEngrLog.Log("Change!");
+                CommEngrLog.Log("Draggable button clicked");
             }
         }
 
