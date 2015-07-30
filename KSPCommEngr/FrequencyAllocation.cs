@@ -37,7 +37,7 @@ namespace KSPCommEngr
     [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
     public class FrequencyAllocation : MonoBehaviour
     {
-        private static Rect windowPosition = new Rect();
+        private static Rect windowPosition = new Rect(0f, 0f, 500f, 500f);
         private static Rect windowPos2 = new Rect();
         private GUIStyle windowStyle, labelStyle;
         private bool hasInitStyles = false;
@@ -68,11 +68,12 @@ namespace KSPCommEngr
             line.SetWidth(3.0f, 0.0f);
             line.SetVertexCount(2);
             Vector3 cPos = PlanetariumCamera.Camera.transform.position;
-            line.SetPosition(0, cPos + new Vector3(0.0f, 0.0f, 3.0f)); 
+            line.SetPosition(0, cPos + new Vector3(0.0f, 0.0f, 3.0f));
             line.SetPosition(1, cPos + new Vector3(1.0f, 1.0f, -3.0f) * 2);
             //ScreenSafeUI
 
-            try {
+            try
+            {
                 if (File.Exists<File>("smiley.png"))
                 {
                     CommEngrLog.Log("smiley.png found!");
@@ -82,7 +83,9 @@ namespace KSPCommEngr
                 {
                     CommEngrLog.Log("smiley.png not found!");
                 }
-            } catch(Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 CommEngrLog.Log(ex.Message, LogType.Exception);
             }
 
@@ -110,14 +113,14 @@ namespace KSPCommEngr
         private void OnDraw()
         {
 
-            windowPosition = GUILayout.Window(10, windowPosition, OnWindow, "Frequency Allocation Chart", GUIStyle.none);
+            windowPosition = GUILayout.Window(10, windowPosition, OnWindow, "Frequency Allocation Chart", HighLogic.Skin.window);
 
             if (windowPosition.x == 0f && windowPosition.y == 0f)
                 windowPosition = windowPosition.CenterScreen();
         }
 
         // warning: do NOT test/observe input in OnGUI (reserve that for Update()); OnGUI is called multiple times per frame
-        public void OnGUI() 
+        public void OnGUI()
         {
             // Test examples for Legacy GUI Scripting Guide: http://docs.unity3d.com/Manual/gui-Basics.html
             // Note: only windows are draggable; they act as containers of controls--hence
@@ -145,24 +148,28 @@ namespace KSPCommEngr
             //}
 
             // Draggable
-            if(buttonRect.Contains(Event.current.mousePosition))
+            if (buttonRect.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown)
             {
-                if (Event.current.type == EventType.MouseDown)
-                {
-                    buttonPressed = true;
-                }
-
-                if (Event.current.type == EventType.MouseUp)
-                {
-                    buttonPressed = false;
-                }
-
-                if (Event.current.type == EventType.MouseDrag)
-                {
-                    buttonRect.x += Event.current.delta.x;
-                    buttonRect.y += Event.current.delta.y;
-                }
+                buttonPressed = true;
             }
+
+            if (buttonPressed && Event.current.type == EventType.MouseUp)
+            {
+                buttonPressed = false;
+            }
+
+            if (buttonPressed)
+            {
+                buttonRect.x = Mouse.screenPos.x - buttonRect.width / 2;
+                buttonRect.y = Mouse.screenPos.y - buttonRect.height / 2;
+            }
+
+            //if (Event.current.type == EventType.MouseDrag)
+            //{
+            //    buttonRect.x += Event.current.delta.x;
+            //    buttonRect.y += Event.current.delta.y;
+            //}
+
 
             if (GUI.Button(buttonRect, "Draggable?"))
             {
@@ -173,9 +180,9 @@ namespace KSPCommEngr
         private void OnWindow(int windowId)
         {
             GUILayout.BeginVertical();
-                // windowPos2 = GUILayout.Window(11, windowPos2, OnWin2, "Inner Window Test", windowStyle);
-                GUI.DrawTexture(new Rect(10f, 10f, 400f, 100f), image, ScaleMode.StretchToFill);
-                GUILayout.Label("Frequency in Hz", labelStyle);
+            // windowPos2 = GUILayout.Window(11, windowPos2, OnWin2, "Inner Window Test", windowStyle);
+            GUI.DrawTexture(new Rect(10f, 10f, 400f, 100f), image, ScaleMode.StretchToFill);
+            GUILayout.Label("Frequency in Hz", labelStyle);
             GUILayout.EndVertical();
 
             GUI.DragWindow();
@@ -183,7 +190,7 @@ namespace KSPCommEngr
         private void OnWin2(int wId)
         {
             GUILayout.BeginHorizontal();
-                GUILayout.Button("Button!");
+            GUILayout.Button("Button!");
             GUILayout.EndHorizontal();
         }
 
@@ -192,7 +199,7 @@ namespace KSPCommEngr
             windowStyle = new GUIStyle(HighLogic.Skin.window);
             windowStyle.fixedWidth = 400f;
             windowStyle.fixedHeight = 400f;
-                
+
             labelStyle = new GUIStyle(HighLogic.Skin.label);
             labelStyle.stretchWidth = true;
             //labelStyle.DrawCursor
@@ -227,7 +234,7 @@ namespace KSPCommEngr
         //the function to plot:
         int f(int x)
         {
-            return 2 * x;
+            return 5;
         }
     }
 }
