@@ -46,7 +46,7 @@ namespace KSPCommEngr
                 if (!hasInitStyles) InitStyles();
                 RenderingManager.AddToPostDrawQueue(0, OnDraw);
             }
-            CommEngrLog.Log("Antenna Prototype OnStart()");
+            CommEngrUtils.Log("Antenna Prototype OnStart()");
         }
 
         public void FixedUpdate()
@@ -77,7 +77,7 @@ namespace KSPCommEngr
             if (this.vessel == FlightGlobals.ActiveVessel)
             {
                 this.vessel.rigidbody.AddRelativeForce(Vector3.up * 500f * FlightInputHandler.state.mainThrottle);
-                CommEngrLog.Log(FlightInputHandler.state.mainThrottle.ToString());
+                CommEngrUtils.Log(FlightInputHandler.state.mainThrottle.ToString());
             }
         }
 

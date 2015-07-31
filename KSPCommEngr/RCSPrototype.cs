@@ -44,7 +44,7 @@ namespace KSPCommEngr
                 if (!hasInitStyles) InitStyles();
                 RenderingManager.AddToPostDrawQueue(0, OnDraw);
             }
-            CommEngrLog.Log("RCSPrototype OnStart()");
+            CommEngrUtils.Log("RCSPrototype OnStart()");
         }
 
         public void FixedUpdate()
@@ -74,7 +74,7 @@ namespace KSPCommEngr
             if (this.vessel == FlightGlobals.ActiveVessel)
             {
                 this.vessel.rigidbody.AddRelativeForce(Vector3.up * 100f * FlightInputHandler.state.mainThrottle);
-                CommEngrLog.Log(FlightInputHandler.state.mainThrottle.ToString());
+                CommEngrUtils.Log(FlightInputHandler.state.mainThrottle.ToString());
             }
         }
 

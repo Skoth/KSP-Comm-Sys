@@ -26,40 +26,30 @@
 #endregion
 
 using System;
-using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
 namespace KSPCommEngr
 {
-    public enum LogType
+    [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
+    public class GroundStation
     {
-        Default,
-        Error,
-        Exception,
-        Warning
-    }
+        private IEnumerable<CommBlockNode> commNodes;
 
-    public static class CommEngrLog
-    {
-        private static string Tag = "[i~ {Communications Engineering} ~i]: ";
+        public void Awake()
+        {
 
-        public static void Log(string msg, LogType lt = LogType.Default) {
-            // this code definitely needs some reworking :O
-            string taggedMsg = Tag + msg;
-            switch (lt)
-            {
-                case LogType.Error:
-                    Debug.LogError(taggedMsg);
-                    break;
-                case LogType.Exception:
-                    Debug.LogException(new Exception(taggedMsg));
-                    break;
-                case LogType.Warning:
-                    Debug.LogWarning(taggedMsg);
-                    break;
-                default:
-                    Debug.Log(taggedMsg);
-                    break;
-            }
+        }
+
+        public void Start()
+        {
+
+        }
+
+        public void Update()
+        {
+
         }
     }
 }

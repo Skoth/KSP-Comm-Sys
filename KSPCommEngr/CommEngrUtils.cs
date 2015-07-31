@@ -27,39 +27,39 @@
 
 using System;
 using UnityEngine;
-using KSP;
-using KSPCommEngr.Extensions;
 
 namespace KSPCommEngr
 {
-    /*
-     * 
-     *      +------O------+               +------O------+
-     *      |             |               |             |
-     *      |             |               |             |
-     *      O      X      O - - - > - - - O      X      O
-     *      |             |               |             |
-     *      |             |               |             |
-     *      +------O------+               +------O------+
-     * 
-     */
-
-    public enum nodeFaces
+    public enum LogType
     {
-        BandpassFilter,
-        DataSource,
-        HighpassFilter,
-        LocalOscillator,
-        LowpassFilter,
-        Multiplier
+        Default,
+        Error,
+        Exception,
+        Warning
     }
 
-    public class CommBlockNode
+    public static class CommEngrUtils
     {
-        UIPanel
-        EZLinkedListNode
-        private byte[] payload;
-        I
+        private static string Tag = "[i~ {Communications Engineering} ~i]: ";
 
+        public static void Log(string msg, LogType lt = LogType.Default) {
+            // this code definitely needs some reworking :O
+            string taggedMsg = Tag + msg;
+            switch (lt)
+            {
+                case LogType.Error:
+                    Debug.LogError(taggedMsg);
+                    break;
+                case LogType.Exception:
+                    Debug.LogException(new Exception(taggedMsg));
+                    break;
+                case LogType.Warning:
+                    Debug.LogWarning(taggedMsg);
+                    break;
+                default:
+                    Debug.Log(taggedMsg);
+                    break;
+            }
+        }
     }
 }

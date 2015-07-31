@@ -50,7 +50,7 @@ namespace KSPCommEngr
 
         public void Awake()
         {
-            CommEngrLog.Log("Frequency Allocation MonoBehaviour Activated");
+            CommEngrUtils.Log("Frequency Allocation MonoBehaviour Activated");
         }
 
         public void Start()
@@ -76,27 +76,27 @@ namespace KSPCommEngr
             {
                 if (File.Exists<File>("smiley.png"))
                 {
-                    CommEngrLog.Log("smiley.png found!");
+                    CommEngrUtils.Log("smiley.png found!");
                     iconImg.LoadImage(File.ReadAllBytes<File>("smiley.png"));
                 }
                 else
                 {
-                    CommEngrLog.Log("smiley.png not found!");
+                    CommEngrUtils.Log("smiley.png not found!");
                 }
             }
             catch (Exception ex)
             {
-                CommEngrLog.Log(ex.Message, LogType.Exception);
+                CommEngrUtils.Log(ex.Message, LogType.Exception);
             }
 
             // Signal tests with sinusoid
             Signal q = new Signal(x => Mathf.Sin(x));
-            CommEngrLog.Log("Frequency Allocation - Sine Signal generated.");
+            CommEngrUtils.Log("Frequency Allocation - Sine Signal generated.");
             //q.DisplaySignal();
 
             // Test channel noise distortion
             q = Channel.AdditiveNoise(q);
-            CommEngrLog.Log("Frequency Allocation - Channel Noise added to Signal.");
+            CommEngrUtils.Log("Frequency Allocation - Channel Noise added to Signal.");
             //q.DisplaySignal();
 
             if (!hasInitStyles) InitStyles();
@@ -173,7 +173,7 @@ namespace KSPCommEngr
 
             if (GUI.Button(buttonRect, "Draggable?"))
             {
-                CommEngrLog.Log("Draggable button clicked");
+                CommEngrUtils.Log("Draggable button clicked");
             }
         }
 
