@@ -56,10 +56,10 @@ namespace KSPCommEngr
 
     public class CommBlockNode
     {
-        UIPanel
-        EZLinkedListNode
-        private byte[] payload;
-        I
+        //UIPanel
+        //EZLinkedListNode
+        //private byte[] payload;
+        //I
 
     }
 }

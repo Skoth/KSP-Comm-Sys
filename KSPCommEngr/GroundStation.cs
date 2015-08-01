@@ -29,6 +29,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
+using KSP;
 
 namespace KSPCommEngr
 {
@@ -36,20 +38,43 @@ namespace KSPCommEngr
     public class GroundStation
     {
         private IEnumerable<CommBlockNode> commNodes;
+        private Rect commSystemPosition = new Rect(200f, 800f, ((float)Screen.width) - 200f, ((float)Screen.height) - 800f);
 
         public void Awake()
         {
-
+            CommEngrUtils.Log("Ground Station Activated");
         }
 
         public void Start()
         {
+            // Draw system overview window
+            RenderingManager.AddToPostDrawQueue(0, OnDraw);
 
+
+            // TODO add hide/show button 
+        }
+
+        private void OnDraw()
+        {
+            commSystemPosition = GUILayout.Window(commSystemPosition.GetHashCode(), commSystemPosition, CommSystemWindow, "System Overview", HighLogic.Skin.window);
         }
 
         public void Update()
         {
 
+        }
+
+        private void CommSystemWindow(int winId)
+        {
+            GUILayout.BeginVertical();
+                GUILayout.BeginHorizontal();
+                    GUILayout.Button("Antenna <|");
+                    GUILayout.Button("Local Oscillator (~)");
+                    GUILayout.Button("Mixer (X)");
+                GUILayout.EndHorizontal();
+                GUILayout.Box("This is a Box Region");
+                GUILayout.Button("Hide");
+            GUILayout.EndVertical();
         }
     }
 }
