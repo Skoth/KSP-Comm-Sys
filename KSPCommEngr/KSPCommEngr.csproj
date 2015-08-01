@@ -50,6 +50,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Aside.cs" />
     <Compile Include="CommConnector.cs" />
     <Compile Include="CommEngrUtils.cs" />
     <Compile Include="CommBlockNode.cs" />
