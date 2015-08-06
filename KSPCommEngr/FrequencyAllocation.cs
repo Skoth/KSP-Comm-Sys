@@ -34,8 +34,8 @@
 
 //namespace KSPCommEngr
 //{
-//    [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
-//    public class FrequencyAllocation : MonoBehaviour
+//    //[KSPAddon(KSPAddon.Startup.TrackingStation, false)]
+//    public class FrequencyAllocation //: MonoBehaviour
 //    {
 //        private static Rect windowPosition = new Rect(0f, 0f, 500f, 500f);
 //        private static Rect windowPos2 = new Rect();

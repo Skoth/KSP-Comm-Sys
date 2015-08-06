@@ -35,7 +35,7 @@ using KSP;
 namespace KSPCommEngr
 {
     [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
-    public class GroundStation
+    public class GroundStation : MonoBehaviour
     {
         private IEnumerable<CommBlockNode> commNodes;
         private Rect commSystemPosition = new Rect(200f, 800f, ((float)Screen.width) - 200f, ((float)Screen.height) - 800f);
@@ -75,6 +75,11 @@ namespace KSPCommEngr
                 GUILayout.Box("This is a Box Region");
                 GUILayout.Button("Hide");
             GUILayout.EndVertical();
+        }
+
+        public void OnGUI()
+        {
+            
         }
     }
 }
