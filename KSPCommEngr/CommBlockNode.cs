@@ -26,6 +26,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
@@ -45,15 +46,15 @@ namespace KSPCommEngr
         Receiver,
         Transmitter
     }
-    
+
     public class EdgeNode
     {
-        public static Dictionary<string, Vector2> VertexDistance = new Dictionary<string, Vector2>()
+        public static Dictionary<string, Rect> VertexDistance = new Dictionary<string, Rect>()
         {
-            { "Top", new Vector2(5f, 0f) },
-            { "Right", new Vector2(10f, 5f) },
-            { "Bottom", new Vector2(5f, 10f) },
-            { "Left", new Vector2(0f, 5f) }
+            { "Top", new Rect(30f, 0f, 0f, 0f) },
+            { "Right", new Rect(60f, 30f, 0f, 0f) },
+            { "Bottom", new Rect(30f, 60f, 0f, 0f) },
+            { "Left", new Rect(0f, 30f, 0f, 0f) }
         };
 
         public Rect Position { get; set; }
@@ -67,7 +68,8 @@ namespace KSPCommEngr
     public class CommBlockNode
     {
         public nodeFace Face { get; set; }
-        public Rect Position = new Rect(30f, 30f, 10f, 10f);
+        public Texture2D Icon;
+        public Rect Position;
         public Dictionary<string, EdgeNode> EdgeNodes = new Dictionary<string, EdgeNode>()
         {
             { "Top", new EdgeNode(new Rect(0f, 0f, 10f, 10f)) },
@@ -75,29 +77,33 @@ namespace KSPCommEngr
             { "Bottom", new EdgeNode(new Rect(0f, 0f, 10f, 10f)) },
             { "Left", new EdgeNode(new Rect(0f, 0f, 10f, 10f)) },
         };
-        private bool selected = false;
+        private bool blockSelected = false;
+        private bool edgeNodeHovered = false;
+        private bool edgeNodeSelected = false;
 
         public CommBlockNode(nodeFace nf, Rect pos)
         {
             Face = nf;
             Position = pos;
+            Icon = GameDatabase.Instance.GetTexture("CommEngr/Textures/Icon", false);
+
             UpdateEdgeNodes();
         }
 
-        public void GUIHandler()
+        public void DrawBlockNode()
         {
             // Draggable Block Node
-            if (Position.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown)
+            if (Position.Contains(Event.current.mousePosition) && Event.current.type == EventType.MouseDown && !(edgeNodeSelected || edgeNodeHovered))
             {
-                selected = true;
+                blockSelected = true;
             }
 
-            if (selected && Event.current.type == EventType.MouseUp)
+            if (blockSelected && Event.current.type == EventType.MouseUp)
             {
-                selected = false;
+                blockSelected = false;
             }
 
-            if (selected)
+            if (blockSelected)
             {
                 Position.x = Mouse.screenPos.x - Position.width / 2;
                 Position.y = Mouse.screenPos.y - Position.height / 2;
@@ -105,28 +111,49 @@ namespace KSPCommEngr
             }
 
             // Render Block Node, followed by its connectors
-            if (GUI.Button(Position, Face.ToString()))
+            if (GUI.Button(Position, Icon, HighLogic.Skin.window))
             {
-                CommEngrUtils.Log("Node clicked!");
+                CommEngrUtils.Log(String.Format("Block Node with Rect({0}, {1}, {2}, {3}) clicked!",
+                    Position.x, Position.y, Position.width, Position.height));
             }
-
-            foreach(var edgeNode in EdgeNodes)
+            
+            // Selectable Edge Nodes
+            foreach (var edgeNode in EdgeNodes)
             {
-                if(GUI.Button(edgeNode.Value.Position, "EN"))
+                if (edgeNode.Value.Position.Contains(Event.current.mousePosition))
+                    edgeNodeHovered = true;
+                else
+                    edgeNodeHovered = false;
+
+                if (edgeNodeHovered && Event.current.type == EventType.MouseDown)
+                    edgeNodeSelected = true;
+
+                if (edgeNodeSelected && Event.current.type == EventType.MouseDown)
                 {
-                    CommEngrUtils.Log("EN Clicked!");
+                    edgeNodeHovered = false;
+                    edgeNodeSelected = false;
+                }
+
+                // Render Edge Nodes
+                if (GUI.Button(edgeNode.Value.Position, "EN"))
+                {
+                    CommEngrUtils.Log(String.Format("Edge Node with Rect({0}, {1}, {2}, {3}) clicked!",
+                        edgeNode.Value.Position.x, edgeNode.Value.Position.y,
+                        edgeNode.Value.Position.width, edgeNode.Value.Position.height));
                 }
             }
         }
 
         private void UpdateEdgeNodes()
         {
-            foreach(var edgeNode in EdgeNodes)
+            foreach (var edgeNode in EdgeNodes)
             {
                 EdgeNodes[edgeNode.Key].Position = new Rect(
-                    Position.x + EdgeNode.VertexDistance[edgeNode.Key].x,
-                    Position.y + EdgeNode.VertexDistance[edgeNode.Key].y,
-                    10f, 10f);
+                    Position.x + EdgeNode.VertexDistance[edgeNode.Key].x - edgeNode.Value.Position.width / 2,
+                    Position.y + EdgeNode.VertexDistance[edgeNode.Key].y - edgeNode.Value.Position.height / 2,
+                    EdgeNodes[edgeNode.Key].Position.width,
+                    EdgeNodes[edgeNode.Key].Position.height
+                );
             }
         }
 
