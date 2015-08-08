@@ -77,6 +77,7 @@ namespace KSPCommEngr
             { "Bottom", new EdgeNode(new Rect(0f, 0f, 10f, 10f)) },
             { "Left", new EdgeNode(new Rect(0f, 0f, 10f, 10f)) },
         };
+        public IEnumerable<CommBlockNode> AdjacentBlocks;
         private bool blockSelected = false;
         private bool edgeNodeHovered = false;
         private bool edgeNodeSelected = false;

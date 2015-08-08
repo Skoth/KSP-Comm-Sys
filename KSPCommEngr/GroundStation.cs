@@ -38,7 +38,7 @@ namespace KSPCommEngr
     public class GroundStation : MonoBehaviour
     {
         private IEnumerable<CommBlockNode> commNodes;
-        private Rect commSystemPosition = new Rect(200f, 800f, ((float)Screen.width) - 200f, ((float)Screen.height) - 800f);
+        private Rect commSystemPosition = new Rect(200f, 800f, ((float)Screen.width) - 300f, ((float)Screen.height) - 800f);
 
         public void Awake()
         {
@@ -72,7 +72,6 @@ namespace KSPCommEngr
                     GUILayout.Button("Local Oscillator (~)");
                     GUILayout.Button("Mixer (X)");
                 GUILayout.EndHorizontal();
-                GUILayout.Box("This is a Box Region");
                 GUILayout.Button("Hide");
             GUILayout.EndVertical();
         }
