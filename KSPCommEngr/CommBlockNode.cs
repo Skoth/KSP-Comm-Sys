@@ -81,6 +81,7 @@ namespace KSPCommEngr
         private bool blockSelected = false;
         private bool edgeNodeHovered = false;
         private bool edgeNodeSelected = false;
+        private int guiDepth = 2;
 
         public CommBlockNode(nodeFace nf, Rect pos)
         {
@@ -103,22 +104,30 @@ namespace KSPCommEngr
             {
                 blockSelected = false;
             }
-
+            
             if (blockSelected)
             {
-                Position.x = Mouse.screenPos.x - Position.width / 2;
-                Position.y = Mouse.screenPos.y - Position.height / 2;
+                guiDepth = 1;
+                // Do not enforce centering
+                //Position.x = Mouse.screenPos.x - Position.width / 2;
+                //Position.y = Mouse.screenPos.y - Position.height / 2;
+
+                Position.x = Mouse.screenPos.x;
+                Position.y = Mouse.screenPos.y;
                 UpdateEdgeNodes();
             }
+            else guiDepth = 2;
 
             // Render Block Node, followed by its connectors
+            GUI.depth = guiDepth;
             if (GUI.Button(Position, Icon, HighLogic.Skin.window))
             {
                 CommEngrUtils.Log(String.Format("Block Node with Rect({0}, {1}, {2}, {3}) clicked!",
                     Position.x, Position.y, Position.width, Position.height));
             }
-            
+
             // Selectable Edge Nodes
+            GUI.depth = 0;
             foreach (var edgeNode in EdgeNodes)
             {
                 if (edgeNode.Value.Position.Contains(Event.current.mousePosition))
@@ -136,12 +145,16 @@ namespace KSPCommEngr
                 }
 
                 // Render Edge Nodes
+                // Test opacity rendering
+                Color temp = GUI.color;
+                GUI.color = new Color(1f, 0f, 0f, 0.5f);
                 if (GUI.Button(edgeNode.Value.Position, "EN"))
                 {
                     CommEngrUtils.Log(String.Format("Edge Node with Rect({0}, {1}, {2}, {3}) clicked!",
                         edgeNode.Value.Position.x, edgeNode.Value.Position.y,
                         edgeNode.Value.Position.width, edgeNode.Value.Position.height));
                 }
+                GUI.color = temp;
             }
         }
 
