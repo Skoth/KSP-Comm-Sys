@@ -17,10 +17,16 @@ namespace KSPCommEngr
 
         public void Start()
         {
-            CommEngrUtils.Log("CommSystem Start()");
-            blockDiagram.Add(new CommBlockNode(nodeFace.DataSource, new Rect(400f, 400f, 60f, 60f)));
-            blockDiagram.Add(new CommBlockNode(nodeFace.LocalOscillator, new Rect(430f, 430f, 60f, 60f)));
-            blockDiagram.Add(new CommBlockNode(nodeFace.BandpassFilter, new Rect(460f, 460f, 60f, 60f)));
+            // Simple DSB Receiver
+            CommEngrUtils.Log("CommSystem: Allocation for DSB Receiver Start");
+            blockDiagram.AddRange(new CommBlockNode[] {
+                new CommBlockNode(nodeFace.DataSource, new Rect(400f, 400f, 60f, 60f)),
+                new CommBlockNode(nodeFace.Multiplier, new Rect(500f, 500f, 60f, 60f)),
+                new CommBlockNode(nodeFace.LocalOscillator, new Rect(600f, 600f, 60f, 60f)),
+                new CommBlockNode(nodeFace.LowpassFilter, new Rect(700f, 700f, 60f, 60f)),
+                new CommBlockNode(nodeFace.DataStore, new Rect(800f, 800f, 60f, 60f)) { }
+            });
+            CommEngrUtils.Log("CommSystem: Allocation for DSB Receiver End");
         }
         
         public void OnGUI()
@@ -30,20 +36,7 @@ namespace KSPCommEngr
             foreach(var block in blockDiagram)
             {
                 block.DrawBlockNode();
-                foreach(var adjacentBlock in block.AdjacentBlocks)
-                {
-                    //// block.Position to adjacentBlock
-                    //Rect temp = new Rect(
-                    //    block.Position.left, block.Position.top,
-                    //    Mathf.Abs(block.Position.left - 
-                    //);
-                    //GUI.DrawTexture(temp, )
-                }
             }
-            //foreach(var blockEdge in blockDiagram.Select(n => n.Position))
-            //{
-            //    GUI.DrawTexture(blockEdge, new Texture(), ScaleMode.ScaleToFit, true, 1.0f);
-            //}
         }
 
         public Signal Cursor
