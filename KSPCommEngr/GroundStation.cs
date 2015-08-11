@@ -37,7 +37,6 @@ namespace KSPCommEngr
     [KSPAddon(KSPAddon.Startup.TrackingStation, false)]
     public class GroundStation : MonoBehaviour
     {
-        private IEnumerable<CommBlockNode> commNodes;
         private Rect commSystemPosition = new Rect(200f, 800f, ((float)Screen.width) - 300f, ((float)Screen.height) - 800f);
 
         public void Awake()
@@ -59,11 +58,6 @@ namespace KSPCommEngr
             commSystemPosition = GUILayout.Window(commSystemPosition.GetHashCode(), commSystemPosition, CommSystemWindow, "System Overview", HighLogic.Skin.window);
         }
 
-        public void Update()
-        {
-
-        }
-
         private void CommSystemWindow(int winId)
         {
             GUILayout.BeginVertical();
@@ -74,11 +68,6 @@ namespace KSPCommEngr
                 GUILayout.EndHorizontal();
                 GUILayout.Button("Hide");
             GUILayout.EndVertical();
-        }
-
-        public void OnGUI()
-        {
-            
         }
     }
 }
