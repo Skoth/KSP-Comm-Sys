@@ -179,11 +179,8 @@ namespace KSPCommEngr
 
                 if (edgeNodeSelected && Event.current.type == EventType.MouseUp)
                 {
-                    screenPt1 = PlanetariumCamera.Camera.ScreenToWorldPoint(new Vector3(edgeNode.Value.Position.x, edgeNode.Value.Position.y, PlanetariumCamera.Camera.transform.position.z));
-                    screenPt2 = PlanetariumCamera.Camera.ScreenToWorldPoint(new Vector3(Mouse.screenPos.x, Mouse.screenPos.y, PlanetariumCamera.Camera.transform.position.z));
-
-                    screenPt1 -= new Vector3(0f, 0f, 5f);
-                    screenPt2 -= new Vector3(0f, 0f, 5f);
+                    screenPt1 = new Vector2(edgeNode.Value.Position.x, edgeNode.Value.Position.y);
+                    screenPt2 = new Vector2(Mouse.screenPos.x, Mouse.screenPos.y);
 
                     callDrawEdge = true;
                     CommEngrUtils.Log("DrawLine initiating with red line...");
@@ -221,22 +218,22 @@ namespace KSPCommEngr
                 }
                 GUI.color = temp;
 
-                if (callDrawEdge) CommBlockNode.DrawEdge();
+                if (callDrawEdge) CommBlockNode.DrawConnection(screenPt1, screenPt2, Color.red, 5f);
             }
         }
-        private static Vector3 screenPt1;
-        private static Vector3 screenPt2;
+        private static Vector2 screenPt1;
+        private static Vector2 screenPt2;
         private static void DrawEdge()
         {
-            if (screenPt1 != null && screenPt2 != null) {
-                GL.PushMatrix();
-                GL.Begin(GL.LINES);
-                    GL.Color(Color.red);
-                    GL.Vertex3(screenPt1.x, screenPt1.y, screenPt1.z);
-                    GL.Vertex3(screenPt2.x, screenPt2.y, screenPt2.z);
-                GL.End();
-                GL.PopMatrix();
-            }
+            //if (screenPt1 != null && screenPt2 != null) {
+            //    GL.PushMatrix();
+            //    GL.Begin(GL.LINES);
+            //        GL.Color(Color.red);
+            //        GL.Vertex3(screenPt1.x, screenPt1.y, screenPt1.z);
+            //        GL.Vertex3(screenPt2.x, screenPt2.y, screenPt2.z);
+            //    GL.End();
+            //    GL.PopMatrix();
+            //}
         }
 
         private void UpdateEdgeNodes()
@@ -268,7 +265,7 @@ namespace KSPCommEngr
             blendMat = (Material)typeof(GUI).GetMethod("get_blendMaterial", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
             return;
         }
-        private static void DrawConnection(Vector2 pointA, Vector2 pointB, Color color, float width)
+        private static void DrawLine(Vector2 pointA, Vector2 pointB, Color color, float width)
         {
             if (lineTex == null) initConnection();
             float dx = pointB.x - pointA.x;
@@ -299,46 +296,46 @@ namespace KSPCommEngr
             GL.PopMatrix();
         }
 
-        //public static void DrawLine(Vector2 pointA, Vector2 pointB, Color color, float width)
-        //{
-        //    // Save the current GUI matrix, since we're going to make changes to it.
-        //    Matrix4x4 matrix = GUI.matrix;
+        public static void DrawConnection(Vector2 pointA, Vector2 pointB, Color color, float width)
+        {
+            // Save the current GUI matrix, since we're going to make changes to it.
+            Matrix4x4 matrix = GUI.matrix;
 
-        //    // Generate a single pixel texture if it doesn't exist
-        //    if (!lineTex) { lineTex = new Texture2D(1, 1); }
+            // Generate a single pixel texture if it doesn't exist
+            if (!lineTex) { lineTex = new Texture2D(1, 1); }
 
-        //    // Store current GUI color, so we can switch it back later,
-        //    // and set the GUI color to the color parameter
-        //    Color savedColor = GUI.color;
-        //    GUI.color = color;
+            // Store current GUI color, so we can switch it back later,
+            // and set the GUI color to the color parameter
+            Color savedColor = GUI.color;
+            GUI.color = color;
 
-        //    // Determine the angle of the line.
-        //    float angle = Vector3.Angle(pointB - pointA, Vector2.right);
+            // Determine the angle of the line.
+            float angle = Vector3.Angle(pointB - pointA, Vector2.right);
 
-        //    // Vector3.Angle always returns a positive number.
-        //    // If pointB is above pointA, then angle needs to be negative.
-        //    if (pointA.y > pointB.y) { angle = -angle; }
+            // Vector3.Angle always returns a positive number.
+            // If pointB is above pointA, then angle needs to be negative.
+            if (pointA.y > pointB.y) { angle = -angle; }
 
-        //    // Use ScaleAroundPivot to adjust the size of the line.
-        //    // We could do this when we draw the texture, but by scaling it here we can use
-        //    //  non-integer values for the width and length (such as sub 1 pixel widths).
-        //    // Note that the pivot point is at +.5 from pointA.y, this is so that the width of the line
-        //    //  is centered on the origin at pointA.
-        //    GUIUtility.ScaleAroundPivot(new Vector2((pointB - pointA).magnitude, width), new Vector2(pointA.x, pointA.y + 0.5f));
+            // Use ScaleAroundPivot to adjust the size of the line.
+            // We could do this when we draw the texture, but by scaling it here we can use
+            //  non-integer values for the width and length (such as sub 1 pixel widths).
+            // Note that the pivot point is at +.5 from pointA.y, this is so that the width of the line
+            //  is centered on the origin at pointA.
+            GUIUtility.ScaleAroundPivot(new Vector2((pointB - pointA).magnitude, width), new Vector2(pointA.x, pointA.y + 0.5f));
 
-        //    // Set the rotation for the line.
-        //    //  The angle was calculated with pointA as the origin.
-        //    GUIUtility.RotateAroundPivot(angle, pointA);
+            // Set the rotation for the line.
+            //  The angle was calculated with pointA as the origin.
+            GUIUtility.RotateAroundPivot(angle, pointA);
 
-        //    // Finally, draw the actual line.
-        //    // We're really only drawing a 1x1 texture from pointA.
-        //    // The matrix operations done with ScaleAroundPivot and RotateAroundPivot will make this
-        //    //  render with the proper width, length, and angle.
-        //    GUI.DrawTexture(new Rect(pointA.x, pointA.y, 1, 1), lineTex);
+            // Finally, draw the actual line.
+            // We're really only drawing a 1x1 texture from pointA.
+            // The matrix operations done with ScaleAroundPivot and RotateAroundPivot will make this
+            //  render with the proper width, length, and angle.
+            GUI.DrawTexture(new Rect(pointA.x, pointA.y, 1, 1), lineTex);
 
-        //    // We're done.  Restore the GUI matrix and GUI color to whatever they were before.
-        //    GUI.matrix = matrix;
-        //    GUI.color = savedColor;
-        //}
+            // We're done.  Restore the GUI matrix and GUI color to whatever they were before.
+            GUI.matrix = matrix;
+            GUI.color = savedColor;
+        }
     }
 }
