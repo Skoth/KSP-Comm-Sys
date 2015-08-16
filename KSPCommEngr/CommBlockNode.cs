@@ -49,37 +49,18 @@ namespace KSPCommEngr
         Transmitter
     }
 
-    public class EdgeNode
-    {
-        public static Dictionary<string, Rect> VertexDistance = new Dictionary<string, Rect>()
-        {
-            { "Top", new Rect(30f, 0f, 0f, 0f) },
-            { "Right", new Rect(60f, 30f, 0f, 0f) },
-            { "Bottom", new Rect(30f, 60f, 0f, 0f) },
-            { "Left", new Rect(0f, 30f, 0f, 0f) }
-        };
-        public CommBlockNode Connection = null;
-
-        public Rect Position { get; set; }
-        public EdgeNode(Rect pos, CommBlockNode conn = null)
-        {
-            Position = pos;
-            if (conn != null) Connection = conn;
-        }
-    }
-
     // Non-GUI ops specified in IVertex interface
     public class CommBlockNode
     {
         public nodeFace Face { get; set; }
         public Texture2D Icon;
         public Rect Position;
-        public Dictionary<string, EdgeNode> EdgeNodes = new Dictionary<string, EdgeNode>()
+        public Dictionary<string, CommNodeConnector> EdgeNodes = new Dictionary<string, CommNodeConnector>()
         {
-            { "Top", new EdgeNode(new Rect(0f, 0f, 10f, 10f)) },
-            { "Right", new EdgeNode(new Rect(0f, 0f, 10f, 10f)) },
-            { "Bottom", new EdgeNode(new Rect(0f, 0f, 10f, 10f)) },
-            { "Left", new EdgeNode(new Rect(0f, 0f, 10f, 10f)) },
+            { "Top", new CommNodeConnector(new Rect(0f, 0f, 10f, 10f)) },
+            { "Right", new CommNodeConnector(new Rect(0f, 0f, 10f, 10f)) },
+            { "Bottom", new CommNodeConnector(new Rect(0f, 0f, 10f, 10f)) },
+            { "Left", new CommNodeConnector(new Rect(0f, 0f, 10f, 10f)) },
         };
         public IEnumerable<CommBlockNode> AdjacentBlocks;
         private Vector2? offsetPos = null;
@@ -93,7 +74,7 @@ namespace KSPCommEngr
             Face = nf;
             Position = pos;
             Icon = GameDatabase.Instance.GetTexture(String.Format("CommEngr/Textures/{0}", Face.ToString()), false);
-            
+
             UpdateEdgeNodes();
         }
 
@@ -128,7 +109,7 @@ namespace KSPCommEngr
             };
         }
 
-        
+
         public void DrawBlockNode()
         {
             // Draggable Block Node
@@ -142,7 +123,7 @@ namespace KSPCommEngr
                 blockSelected = false;
                 offsetPos = null;
             }
-            
+
             if (blockSelected)
             {
                 guiDepth = 1;
@@ -184,24 +165,7 @@ namespace KSPCommEngr
 
                     callDrawEdge = true;
                     CommEngrUtils.Log("DrawLine initiating with red line...");
-                    
 
-                    //DrawConnection(new Vector2(edgeNode.Value.Position.x, edgeNode.Value.Position.y), Mouse.screenPos, Color.red, 3.0f);
-                    //DrawLine(new Vector2(edgeNode.Value.Position.x, edgeNode.Value.Position.y), Mouse.screenPos, Color.red, 3f);
-                    //CommEngrUtils.Log("GL Lines initiating with blue line...");
-                    
-                    //GL.PushMatrix();
-                    //GL.Begin(GL.LINES);
-                    //    GL.Color(Color.blue);
-                    //    GL.Vertex(new Vector3(edgeNode.Value.Position.x, edgeNode.Value.Position.y, 0f));
-                    //    GL.Vertex(new Vector3(Mouse.screenPos.x, Mouse.screenPos.y, 0f));
-                    //GL.End();
-                    //GL.PopMatrix();
-                    //CommEngrUtils.Log("GUI Label initiating with green line...");
-                    //Texture2D tempTex = new Texture2D(5, 5);
-                    //tempTex.SetPixels(Enumerable.Repeat(Color.green, tempTex.width * tempTex.height).ToArray());
-                    //GUIUtility.ScaleAroundPivot(new Vector2(), new Vector2());
-                    //GUI.Label(new Rect(200, 200, 10, 10), tempTex);
                     edgeNodeHovered = false;
                     edgeNodeSelected = false;
                 }
@@ -218,84 +182,35 @@ namespace KSPCommEngr
                 }
                 GUI.color = temp;
 
-                if (callDrawEdge) CommBlockNode.DrawConnection(screenPt1, screenPt2, Color.red, 5f);
+                if (callDrawEdge)
+                {
+                    Texture2D tempTex = new Texture2D(5, 5, TextureFormat.ARGB32, false);
+                    tempTex.SetPixels(0, 0, 2, 2, Enumerable.Repeat(Color.cyan, 9).ToArray());
+                    GUI.DrawTexture(new Rect(300f, 300f, 100f, 100f), tempTex, ScaleMode.ScaleToFit, true);
+                    CommBlockNode.DrawConnection(screenPt1, screenPt2, Color.red, 5f);
+                }
             }
         }
         private static Vector2 screenPt1;
         private static Vector2 screenPt2;
-        private static void DrawEdge()
-        {
-            //if (screenPt1 != null && screenPt2 != null) {
-            //    GL.PushMatrix();
-            //    GL.Begin(GL.LINES);
-            //        GL.Color(Color.red);
-            //        GL.Vertex3(screenPt1.x, screenPt1.y, screenPt1.z);
-            //        GL.Vertex3(screenPt2.x, screenPt2.y, screenPt2.z);
-            //    GL.End();
-            //    GL.PopMatrix();
-            //}
-        }
 
         private void UpdateEdgeNodes()
         {
             foreach (var edgeNode in EdgeNodes)
             {
                 EdgeNodes[edgeNode.Key].Position = new Rect(
-                    Position.x + EdgeNode.VertexDistance[edgeNode.Key].x - edgeNode.Value.Position.width / 2,
-                    Position.y + EdgeNode.VertexDistance[edgeNode.Key].y - edgeNode.Value.Position.height / 2,
+                    Position.x + CommNodeConnector.VertexDistance[edgeNode.Key].x - edgeNode.Value.Position.width / 2,
+                    Position.y + CommNodeConnector.VertexDistance[edgeNode.Key].y - edgeNode.Value.Position.height / 2,
                     EdgeNodes[edgeNode.Key].Position.width,
                     EdgeNodes[edgeNode.Key].Position.height
                 );
             }
         }
 
-
-        private static Rect lineRect = new Rect(0, 0, 1, 1);
         private static Texture2D lineTex = null;
-        private static Material blitMat = null;
-        private static Material blendMat = null;
         private bool callDrawEdge = false;
 
-        private static void initConnection()
-        {
-            lineTex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            lineTex.SetPixel(0, 1, Color.red);
-            lineTex.Apply();
-            blitMat = (Material)typeof(GUI).GetMethod("get_blitMaterial", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
-            blendMat = (Material)typeof(GUI).GetMethod("get_blendMaterial", BindingFlags.NonPublic | BindingFlags.Static).Invoke(null, null);
-            return;
-        }
-        private static void DrawLine(Vector2 pointA, Vector2 pointB, Color color, float width)
-        {
-            if (lineTex == null) initConnection();
-            float dx = pointB.x - pointA.x;
-            float dy = pointB.y - pointA.y;
-            float len = Mathf.Sqrt(dx * dx + dy * dy);
-            if (len < 0.001f) return;
-            Texture2D tex = lineTex;
-            Material mat = blitMat;
-            float wdx = width * dy / len;
-            float wdy = width * dx / len;
-            /*
-                [ 00 , 01, 02, 03 ]
-                [ 10 , 11, 12, 13 ]
-                [ 20 , 21, 22, 23 ]
-                [ 30 , 31, 32, 33 ]
-            */
-            Matrix4x4 matrix = Matrix4x4.identity;
-            matrix.m00 = dx;
-            matrix.m01 = -wdx;
-            matrix.m03 = pointA.x + 0.5f * wdx;
-            matrix.m10 = dy;
-            matrix.m11 = wdy;
-            matrix.m13 = pointA.y - 0.5f * wdy;
-            GL.PushMatrix();
-            GL.MultMatrix(matrix);
-            GUI.color = color;
-            GUI.DrawTexture(lineRect, tex);
-            GL.PopMatrix();
-        }
-
+        // First and only working GUI Line rendering (replacement with GL.LINES?)
         public static void DrawConnection(Vector2 pointA, Vector2 pointB, Color color, float width)
         {
             // Save the current GUI matrix, since we're going to make changes to it.
