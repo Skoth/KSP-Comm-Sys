@@ -22,10 +22,14 @@ namespace KSPCommEngr
         public CommBlockNode RConnectedNode = null;
 
         public Rect Position { get; set; }
-        public CommNodeConnector(Rect pos, CommBlockNode conn = null)
+        public CommNodeConnector(Rect pos, CommBlockNode lNode = null, CommBlockNode rNode = null)
         {
             Position = pos;
-            if (conn != null) Connection = conn;
+            LConnectedNode = lNode;
+            RConnectedNode = rNode;
+            if (LConnectedNode != null && RConnectedNode != null)
+                Debug.Log("DrawConnection()");
+                //DrawConnection();
         }
     }
 }
