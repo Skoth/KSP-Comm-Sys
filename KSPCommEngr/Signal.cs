@@ -33,58 +33,48 @@ using UnityEngine;
 
 namespace KSPCommEngr
 {
-    [KSPAddon(KSPAddon.Startup.EditorAny, false)]
-    public class Complex : MonoBehaviour
-    {
-        public void Awake()
-        {
-            CommEngrUtils.Log("Complex Awake() called");
-        }
-
-        public void Start()
-        {
-            CommEngrUtils.Log("Complex Start() called");
-        }
-
-        public float a { get; set; }
-        public float b { get; set; }
-        public float Magnitude
-        {
-            get
-            {
-                return Mathf.Sqrt(a * a + b * b);
-            }
-        }
-        public float Phase
-        {
-            get
-            {
-                // If non-zero, compute value, otherwise throw non-real exception
-                if (!(Mathf.Abs(a) < 0.001))
-                    return Mathf.Atan2(a, b);
-                else
-                    throw new Exception();
-            }
-        }
-
-    }
-
+    // TODO: size mapping from Texture2D to normalized numeric scale (necessary?)
     public class Signal
     {
-        public float[] x { get; set; }
-        private float[] t;
-        private Func<float, float> x_t;
-        public int Size { get; set; }
+        // Complex-valued 1D array [{(Re), (Im)}, {(Re), (Im)}, ... ]
+        public float[] x;
 
-        public Signal() : this(x => x, 0f, 127f, 1f) { }
-        public Signal(Func<float, float> expression) : this(expression, 0f, 127f, 1f) { }
-        public Signal(Func<float, float> expression, float start, float stop) : this(expression, start, stop, 1f) { }
-        public Signal(Func<float, float> expression, float start, float end, float step)
+        // Parameter that x is a function of
+        private float[] t;
+        
+        // Expression that defines x (if functionally definable)
+        private Func<float, float> x_t;
+
+        public Texture2D plot;
+        public int Size = 128;
+
+        public Signal(Func<float, float> expression = null, bool real = true)
         {
-            x_t = expression;
-            Size = (int)Mathf.Floor((end - start) / step + 1f);
-            t = Enumerable.Range(1, Size).Select(i => start + (i - 1)*step).ToArray<float>();
-            x = t.Select(x_t).ToArray<float>();
+
+            t = Enumerable.Range(0, Size).ToArray().Select(x => (float)x).ToArray();
+            x = Enumerable.Repeat(0f, Size).ToArray();
+            plot = new Texture2D(Size, Size);
+            if(expression == null)
+            {
+                x_t = (x) => 1;
+            }
+            else if(real)
+            {
+                for(int i = 0; i < t.Length; ++i)
+                {
+                    if (i % 2 == 0)
+                        x[i] = expression(t[i]);
+                    else
+                        x[i] = 0;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < t.Length; ++i)
+                {
+                    x[i] = expression(t[i]);
+                }
+            }
         }
 
         // Indexer
@@ -98,6 +88,12 @@ namespace KSPCommEngr
             {
                 x[i] = value;
             }
+        }
+
+        // TODO fix operator overloading implementation
+        public static Signal operator +(Signal s1, Signal s2)
+        {
+            return new Signal();
         }
 
         public void DisplaySignal()
@@ -123,20 +119,6 @@ namespace KSPCommEngr
         {
             // TODO: implement basic FFT test
             return new Signal();
-        }
-    }
-
-    public static class Channel
-    {
-        public static Signal AdditiveNoise(Signal x)
-        {
-            Signal y = new Signal();
-
-            for (int i = 0; i < x.Size; ++i)
-            {
-                y[i] = x[i] + UnityEngine.Random.value;
-            }
-            return y;
         }
     }
 }
