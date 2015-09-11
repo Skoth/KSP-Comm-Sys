@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aside.cs" />
-    <Compile Include="CommConnector.cs" />
+    <Compile Include="Channel.cs" />
     <Compile Include="CommEngrUtils.cs" />
     <Compile Include="CommBlockNode.cs" />
     <Compile Include="CommNodeConnector.cs" />
@@ -62,6 +62,7 @@
     <Compile Include="Extensions\RectExtensions.cs" />
     <Compile Include="FrequencyAllocation.cs" />
     <Compile Include="AntennaPrototype.cs" />
+    <Compile Include="GLUtils.cs" />
     <Compile Include="GroundStation.cs" />
     <Compile Include="ITransform.cs" />
     <Compile Include="IVertex.cs" />
