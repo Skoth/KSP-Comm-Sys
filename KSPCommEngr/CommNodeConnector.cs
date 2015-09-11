@@ -9,7 +9,6 @@ namespace KSPCommEngr
 {
     public class CommNodeConnector
     {
-        // Refactor into constants in CommEngrUtils?
         public static Dictionary<string, Rect> VertexDistance = new Dictionary<string, Rect>()
         {
             { "Top", new Rect(30f, 0f, 0f, 0f) },
@@ -20,6 +19,7 @@ namespace KSPCommEngr
 
         public CommBlockNode LConnectedNode = null;
         public CommBlockNode RConnectedNode = null;
+        public Rect[] path;
 
         public Rect Position { get; set; }
         public CommNodeConnector(Rect pos, CommBlockNode lNode = null, CommBlockNode rNode = null)
@@ -28,8 +28,23 @@ namespace KSPCommEngr
             LConnectedNode = lNode;
             RConnectedNode = rNode;
             if (LConnectedNode != null && RConnectedNode != null)
-                Debug.Log("DrawConnection()");
-                //DrawConnection();
+                DrawConnection();
+        }
+
+        public void createConnection(CommBlockNode lNode, CommBlockNode rNode)
+        {
+            LConnectedNode = lNode;
+            RConnectedNode = rNode;
+            //CommSystem.VertexLayer.Validate();
+            //CommSystem.EdgeLayer.Validate();
+        }
+
+        private void DrawConnection()
+        {
+            foreach (var rect in path)
+            {
+                GLUtils.DrawConnection(new Vector2(rect.x, rect.y), new Vector2(rect.x + rect.width, rect.y + rect.height), Color.red, 3f);
+            }
         }
     }
 }
