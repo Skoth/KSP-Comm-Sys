@@ -73,7 +73,9 @@ namespace KSPCommEngr
         private static Rect initPos;
         private bool callDrawEdge;
 
-        public CommBlockNode(nodeFace nf, Rect pos)
+        public Func<float, float> TransferFunction;
+
+        public CommBlockNode(nodeFace nf, Rect pos, Func<float, float> expression = x => 1)
         {
             Face = nf;
             Position = pos;
@@ -160,7 +162,7 @@ namespace KSPCommEngr
                     edgeNodeHovered = false;
 
                 if (edgeNodeHovered && Input.GetMouseButtonDown(0)) {
-                    screenPt1 = Input.mousePosition;
+                    screenPt1 = new Vector2(edgeNode.Value.Position.x, (float)Screen.height - edgeNode.Value.Position.y);
                     edgeNodeSelected = true;
                     callDrawEdge = true;
                 }
@@ -171,33 +173,19 @@ namespace KSPCommEngr
                     edgeNodeHovered = false;
                     edgeNodeSelected = false;
                 }
-
-                // Render Edge Node Buttons
-                // Test opacity rendering
-                //Color temp = GUI.color;
-                //GUI.color = new Color(temp.r, temp.g, temp.b, 0.5f);
                 if (GUI.Button(edgeNode.Value.Position, "EN"))
                 {
-                    //CommEngrUtils.Log(String.Format("Edge Node with Rect({0}, {1}, {2}, {3}) clicked!",
-                    //    edgeNode.Value.Position.x, edgeNode.Value.Position.y,
-                    //    edgeNode.Value.Position.width, edgeNode.Value.Position.height));
+
                 }
 
                 if (edgeNodeSelected)
                 {
-                    //Texture2D tempTex = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-                    //tempTex.SetPixel(0, 0, Color.cyan);
+
                 }
 
                 if (callDrawEdge)
                 {
-                    // Dragged Line
-                    //Texture2D tempTex = new Texture2D(5, 5, TextureFormat.ARGB32, false);
-                    //tempTex.SetPixels(0, 0, 2, 2, Enumerable.Repeat(Color.cyan, 9).ToArray());
-                    //GUI.DrawTexture(new Rect(Mouse.screenPos.x, Mouse.screenPos.y, 50f, 50f), tempTex, ScaleMode.ScaleToFit, true);
-
-                    CommBlockNode.DrawConnection(screenPt1, Mouse.screenPos, Color.red, 2f);
-                    //callDrawEdge = false;
+                    GLUtils.DrawConnection(screenPt1 + new Vector2(edgeNode.Value.Position.width/2f, edgeNode.Value.Position.height/2f), Mouse.screenPos, Color.red, 10f);
                 }
             }
         }
@@ -213,21 +201,6 @@ namespace KSPCommEngr
                     EdgeNodes[edgeNode.Key].Position.height
                 );
             }
-        }
-
-        public static void DrawConnection(Vector2 ptA, Vector2 ptB, Color color, float width)
-        {
-            Color savedColor = GUI.color;
-            GUI.color = color;
-            Matrix4x4 savedMatrix = GUI.matrix;
-            Vector2 rectPtA = new Vector2(ptA.x, Screen.height - ptA.y);
-            float angle = (ptB.y < rectPtA.y) ? -Vector2.Angle(ptB - rectPtA, Vector2.right) : Vector2.Angle(ptB - rectPtA, Vector2.right);
-            GUIUtility.RotateAroundPivot(angle, rectPtA);
-            float mag = (ptB - rectPtA).magnitude;
-            Texture2D lineTex = new Texture2D(1, 1);
-            GUI.DrawTexture(new Rect(ptA.x, rectPtA.y, mag, width), lineTex);
-            GUI.color = savedColor;
-            GUI.matrix = savedMatrix;
         }
     }
 }
