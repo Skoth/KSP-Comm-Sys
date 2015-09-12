@@ -78,8 +78,12 @@ namespace KSPCommEngr
 
         private void CommSystemWindow(int winId)
         {
+            Texture2D tex = new Texture2D(20, 20);
+            tex.SetPixels(Enumerable.Repeat(Color.white, 20*20).ToArray());
+            tex.SetPixels(0, 9, 20, 1, Enumerable.Repeat(Color.black, 5).ToArray());
+            tex.SetPixels(9, 0, 1, 20, Enumerable.Repeat(Color.black, 5).ToArray());
             GUILayout.BeginVertical();
-            //GUILayout.Box()
+            GUILayout.Box(tex);
             GUILayout.BeginHorizontal();
             GUILayout.Button("Antenna <|");
             GUILayout.Button("Local Oscillator (~)");
