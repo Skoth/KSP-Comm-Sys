@@ -36,49 +36,45 @@ namespace KSPCommEngr
     // TODO: size mapping from Texture2D to normalized numeric scale (necessary?)
     public class Signal
     {
-        // Complex-valued 1D array [{(Re), (Im)}, {(Re), (Im)}, ... ]
-        public float[] x;
-
-        // Parameter that x is a function of
-        private float[] t;
-        
-        // Expression that defines x (if functionally definable)
-        private Func<float, float> x_t;
-
+        public Complex[] x;
         public Texture2D plot;
-        public int Size = 128;
 
-        public Signal(Func<float, float> expression = null, bool real = true)
+        public Signal(Complex[] u = null, Func<float, float> expression = null, bool real = true)
         {
-
-            t = Enumerable.Range(0, Size).ToArray().Select(x => (float)x).ToArray();
-            x = Enumerable.Repeat(0f, Size).ToArray();
-            plot = new Texture2D(Size, Size);
-            if(expression == null)
+            if(u != null)
             {
-                x_t = (x) => 1;
-            }
-            else if(real)
-            {
-                for(int i = 0; i < t.Length; ++i)
-                {
-                    if (i % 2 == 0)
-                        x[i] = expression(t[i]);
-                    else
-                        x[i] = 0;
-                }
+                x = u;
             }
             else
             {
-                for (int i = 0; i < t.Length; ++i)
+                if (expression == null)
                 {
-                    x[i] = expression(t[i]);
+                    expression = i => 0f;
                 }
+                else if (real)
+                {
+                    for (int i = 0; i < x.Length; ++i)
+                    {
+                        if (i % 2 == 0)
+                            x[i].Real = expression(i);
+                        else
+                            x[i].Imag = 0f;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < x.Length; ++i)
+                    {
+                        x[i].Real = expression(i);
+                        x[i].Imag = expression(i);
+                    }
+                }
+                plot = new Texture2D(x.Length, x.Length);
             }
         }
 
         // Indexer
-        public float this[int i]
+        public Complex this[int i]
         {
             get
             {
@@ -89,36 +85,75 @@ namespace KSPCommEngr
                 x[i] = value;
             }
         }
-
-        // TODO fix operator overloading implementation
-        public static Signal operator +(Signal s1, Signal s2)
+        public static Signal operator +(Signal u, Signal v)
         {
-            return new Signal();
-        }
-
-        public void DisplaySignal()
-        {
-            string strSignal = "{ ";
-            int i = 0;
-            for (; i < Size - 1; ++i)
+            Signal w = new Signal();
+            for(int i = 0; i < w.x.Length; ++i)
             {
-                // Temp log resolver
-                if (i % 4 == 0)
-                {
-                    CommEngrUtils.Log(strSignal);
-                    strSignal = String.Empty;
-                }
-                strSignal += "(" + i.ToString() + ":" + x[i].ToString() + "), ";
+                w[i] = u[i] + v[i];
             }
-            strSignal += "(" + i + ":" + x[i].ToString() + ") }";
-
-            CommEngrUtils.Log(strSignal);
+            return w;
         }
 
-        private Signal FFT()
+        public static Signal operator -(Signal u, Signal v)
         {
-            // TODO: implement basic FFT test
-            return new Signal();
+            Signal w = new Signal();
+            for (int i = 0; i < w.x.Length; ++i)
+            {
+                w[i] = u[i] - v[i];
+            }
+            return w;
         }
+
+        public static Signal operator *(Signal u, Signal v)
+        {
+            Signal w = new Signal();
+            for (int i = 0; i < w.x.Length; ++i)
+            {
+                w[i] = u[i] * v[i];
+            }
+            return w;
+        }
+
+        // TODO: Fix FFT float[] <---> Complex[] conversions
+        // Convolution operator
+        //public static Signal operator %(Signal u, Signal v)
+        //{
+        //    Signal U = FFT(u);
+        //    Signal V = FFT(v);
+        //    Signal W = U * V;
+        //    return IFFT(W);
+        //}
+
+        //private static Signal FFT(Signal x)
+        //{
+        //    float[] real = new float[x.x.Length / 2], 
+        //        imag = new float[x.x.Length / 2];
+
+        //    for(int i = 0; i < x.x.Length; ++i)
+        //    {
+        //        if (i % 2 == 0)
+        //            real[i / 2] = x[i];
+        //        else
+        //            imag[i / 2] = x[i];
+        //    }
+
+        //    Signal realFFT = FFT(new Signal(real));
+        //    Signal imagFFT = FFT(new Signal(imag));
+
+        //    float Wn = 2 * Mathf.PI / x.Size;
+        //    Signal X = new Signal();
+        //    for (int i = 0; i < x.Size / 2; ++i)
+        //    {
+
+        //    }
+
+        //    return new Signal();
+        //}
+
+        //private static Signal IFFT(Signal x)
+        //{
+        //    return new Signal();
+        //}
     }
 }
