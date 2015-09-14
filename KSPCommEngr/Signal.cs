@@ -34,10 +34,60 @@ using UnityEngine;
 namespace KSPCommEngr
 {
     // TODO: size mapping from Texture2D to normalized numeric scale (necessary?)
-    public class Signal
+    public class Signal : ICollection
     {
-        public Complex[] x;
+        private Complex[] x;
         public Texture2D plot;
+
+        public int Count
+        {
+            get
+            {
+                return x.Length;
+            }
+        }
+
+        public object SyncRoot
+        {
+            get
+            {
+                return this;
+            }
+        }
+
+        public bool IsSynchronized
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        public void CopyTo(Array array, int index)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            for (int i = 0; i < Count; ++i)
+            {
+                yield return x[i];
+            }
+        }
+
+        // Indexer
+        public Complex this[int i]
+        {
+            get
+            {
+                return x[i];
+            }
+            set
+            {
+                x[i] = value;
+            }
+        }
 
         public Signal(Complex[] u = null, Func<float, float> expression = null, bool real = true)
         {
@@ -73,20 +123,9 @@ namespace KSPCommEngr
             }
         }
 
-        // Indexer
-        public Complex this[int i]
-        {
-            get
-            {
-                return x[i];
-            }
-            set
-            {
-                x[i] = value;
-            }
-        }
         public static Signal operator +(Signal u, Signal v)
         {
+            if (u.Count != v.Count) return null;
             Signal w = new Signal();
             for(int i = 0; i < w.x.Length; ++i)
             {
@@ -97,6 +136,7 @@ namespace KSPCommEngr
 
         public static Signal operator -(Signal u, Signal v)
         {
+            if (u.Count != v.Count) return null;
             Signal w = new Signal();
             for (int i = 0; i < w.x.Length; ++i)
             {
@@ -107,53 +147,32 @@ namespace KSPCommEngr
 
         public static Signal operator *(Signal u, Signal v)
         {
+            if (u.Count != v.Count) return null;
             Signal w = new Signal();
-            for (int i = 0; i < w.x.Length; ++i)
+            for (int i = 0; i < u.Count; ++i)
             {
                 w[i] = u[i] * v[i];
             }
             return w;
         }
-
-        // TODO: Fix FFT float[] <---> Complex[] conversions
+        
         // Convolution operator
-        //public static Signal operator %(Signal u, Signal v)
-        //{
-        //    Signal U = FFT(u);
-        //    Signal V = FFT(v);
-        //    Signal W = U * V;
-        //    return IFFT(W);
-        //}
+        public static Signal operator %(Signal u, Signal v)
+        {
+            Signal U = FFT(u);
+            Signal V = FFT(v);
+            Signal W = U * V;
+            return IFFT(W);
+        }
 
-        //private static Signal FFT(Signal x)
-        //{
-        //    float[] real = new float[x.x.Length / 2], 
-        //        imag = new float[x.x.Length / 2];
+        public static Signal FFT(Signal u)
+        {
+            return new Signal();
+        }
 
-        //    for(int i = 0; i < x.x.Length; ++i)
-        //    {
-        //        if (i % 2 == 0)
-        //            real[i / 2] = x[i];
-        //        else
-        //            imag[i / 2] = x[i];
-        //    }
-
-        //    Signal realFFT = FFT(new Signal(real));
-        //    Signal imagFFT = FFT(new Signal(imag));
-
-        //    float Wn = 2 * Mathf.PI / x.Size;
-        //    Signal X = new Signal();
-        //    for (int i = 0; i < x.Size / 2; ++i)
-        //    {
-
-        //    }
-
-        //    return new Signal();
-        //}
-
-        //private static Signal IFFT(Signal x)
-        //{
-        //    return new Signal();
-        //}
+        public static Signal IFFT(Signal x)
+        {
+            return new Signal();
+        }
     }
 }
