@@ -75,11 +75,13 @@ namespace KSPCommEngr
 
         public Func<float, float> TransferFunction;
 
-        public CommBlockNode(nodeFace nf, Rect pos, Func<float, float> expression = x => 1)
+        public CommBlockNode(nodeFace nf, Rect pos, Func<float, float> expression = null)
         {
             Face = nf;
             Position = pos;
             Icon = GameDatabase.Instance.GetTexture(String.Format("CommEngr/Textures/{0}", Face.ToString()), false);
+
+            TransferFunction = expression == null ? (x) => 1 : expression;
 
             UpdateEdgeNodes();
         }
