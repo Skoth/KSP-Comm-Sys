@@ -58,6 +58,7 @@
     <Compile Include="CommBlockNode.cs" />
     <Compile Include="CommNodeConnector.cs" />
     <Compile Include="CommSystem.cs" />
+    <Compile Include="Complex.cs" />
     <Compile Include="Extensions\PartExtensions.cs" />
     <Compile Include="Extensions\RectExtensions.cs" />
     <Compile Include="FrequencyAllocation.cs" />
