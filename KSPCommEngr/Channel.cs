@@ -7,11 +7,11 @@ namespace KSPCommEngr
 {
     public static class Channel
     {
-        public static void AWGN(this Signal x)
+        public static void AWGN(this Signal u)
         {
-            for (int i = 0; i < x.x.Length; ++i)
+            for (int i = 0; i < u.Count; ++i)
             {
-                x[i].Real = x[i].Real + UnityEngine.Random.value;
+                u[i].Real = u[i].Real + UnityEngine.Random.value;
             }
         }
     }
