@@ -9,9 +9,9 @@ namespace KSPCommEngr
     {
         public static void AWGN(this Signal x)
         {
-            for (int i = 0; i < x.Size; ++i)
+            for (int i = 0; i < x.x.Length; ++i)
             {
-                x[i] = x[i] + UnityEngine.Random.value;
+                x[i].Real = x[i].Real + UnityEngine.Random.value;
             }
         }
     }
