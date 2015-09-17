@@ -37,6 +37,8 @@ namespace KSPCommEngr
     public class Signal : ICollection
     {
         private Complex[] x;
+        private float[] x_f;
+
         public Texture2D plot;
 
         public int Count
@@ -45,6 +47,32 @@ namespace KSPCommEngr
             {
                 return x.Length;
             }
+        }
+
+        // Real Signal
+        public Signal(int Size, Func<float, float> expression)
+        {
+            float step = 1 / (float)Size,
+            N_1 = (float)(Size - 1);
+            int i = 0;
+            for(float f = 0f; f <= N_1; f += step)
+            {
+                x[i] = new Complex(expression(f));
+                ++i;
+            }
+            plot = new Texture2D(x.Length, x.Length);
+        }
+
+        // Complex Signal
+        public Signal(Func<float, float, float> expression)
+        {
+            plot = new Texture2D(x.Length, x.Length);
+        }
+
+
+        public Signal(Complex[] u = null)
+        {
+            plot = new Texture2D(x.Length, x.Length);
         }
 
         public object SyncRoot
@@ -86,40 +114,6 @@ namespace KSPCommEngr
             set
             {
                 x[i] = value;
-            }
-        }
-
-        public Signal(Complex[] u = null, Func<float, float> expression = null, bool real = true)
-        {
-            if(u != null)
-            {
-                x = u;
-            }
-            else
-            {
-                if (expression == null)
-                {
-                    expression = i => 0f;
-                }
-                else if (real)
-                {
-                    for (int i = 0; i < x.Length; ++i)
-                    {
-                        if (i % 2 == 0)
-                            x[i].Real = expression(i);
-                        else
-                            x[i].Imag = 0f;
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < x.Length; ++i)
-                    {
-                        x[i].Real = expression(i);
-                        x[i].Imag = expression(i);
-                    }
-                }
-                plot = new Texture2D(x.Length, x.Length);
             }
         }
 
@@ -165,12 +159,12 @@ namespace KSPCommEngr
             return IFFT(W);
         }
 
-        public static Signal FFT(Signal u)
+        private float[] FFT(Signal u)
         {
-            return new Signal();
+
         }
 
-        public static Signal IFFT(Signal x)
+        public float[] IFFT(Signal x)
         {
             return new Signal();
         }
