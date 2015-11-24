@@ -50,19 +50,19 @@ namespace KSPCommEngr
     }
 
     // Non-GUI ops specified in IVertex interface
-    public class CommBlockNode
+    public class CommBlock
     {
         public nodeFace Face { get; set; }
         public Texture2D Icon;
         public Rect Position;
-        public Dictionary<string, CommNodeConnector> EdgeNodes = new Dictionary<string, CommNodeConnector>()
+        public Dictionary<string, CommConnector> EdgeNodes = new Dictionary<string, CommConnector>()
         {
-            { "Top", new CommNodeConnector(new Rect(0f, 0f, 10f, 10f)) },
-            { "Right", new CommNodeConnector(new Rect(0f, 0f, 10f, 10f)) },
-            { "Bottom", new CommNodeConnector(new Rect(0f, 0f, 10f, 10f)) },
-            { "Left", new CommNodeConnector(new Rect(0f, 0f, 10f, 10f)) },
+            { "Top", new CommConnector(new Rect(0f, 0f, 10f, 10f)) },
+            { "Right", new CommConnector(new Rect(0f, 0f, 10f, 10f)) },
+            { "Bottom", new CommConnector(new Rect(0f, 0f, 10f, 10f)) },
+            { "Left", new CommConnector(new Rect(0f, 0f, 10f, 10f)) },
         };
-        public IEnumerable<CommBlockNode> AdjacentBlocks;
+        public IEnumerable<CommBlock> AdjacentBlocks;
         private Vector2? offsetPos = null;
         private bool blockSelected = false;
         private bool edgeNodeHovered = false;
@@ -75,12 +75,13 @@ namespace KSPCommEngr
 
         public Func<float, float> TransferFunction;
 
-        public CommBlockNode(nodeFace nf, Rect pos, Func<float, float> expression = null)
+        public CommBlock(nodeFace nf, Rect pos, Func<float, float> expression = null)
         {
             Face = nf;
             Position = pos;
             Icon = GameDatabase.Instance.GetTexture(String.Format("CommEngr/Textures/{0}", Face.ToString()), false);
 
+            // TODO: Formulate lambda-friendly DSP functional implementation
             TransferFunction = expression == null ? (x) => 1 : expression;
 
             UpdateEdgeNodes();
@@ -150,7 +151,7 @@ namespace KSPCommEngr
             GUI.depth = guiDepth;
             if (GUI.Button(Position, Icon, GetBlockStyle(Icon)))
             {
-                CommEngrUtils.Log(String.Format("Block Node with Rect({0}, {1}, {2}, {3}) clicked!",
+                CommEngrUtils.Log(string.Format("Block with Rect({0}, {1}, {2}, {3}) clicked!",
                     Position.x, Position.y, Position.width, Position.height));
             }
 
@@ -197,8 +198,8 @@ namespace KSPCommEngr
             foreach (var edgeNode in EdgeNodes)
             {
                 EdgeNodes[edgeNode.Key].Position = new Rect(
-                    Position.x + CommNodeConnector.VertexDistance[edgeNode.Key].x - edgeNode.Value.Position.width / 2,
-                    Position.y + CommNodeConnector.VertexDistance[edgeNode.Key].y - edgeNode.Value.Position.height / 2,
+                    Position.x + CommConnector.VertexDistance[edgeNode.Key].x - edgeNode.Value.Position.width / 2,
+                    Position.y + CommConnector.VertexDistance[edgeNode.Key].y - edgeNode.Value.Position.height / 2,
                     EdgeNodes[edgeNode.Key].Position.width,
                     EdgeNodes[edgeNode.Key].Position.height
                 );

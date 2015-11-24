@@ -7,7 +7,7 @@ using KSP;
 
 namespace KSPCommEngr
 {
-    public class CommNodeConnector
+    public class CommConnector
     {
         public static Dictionary<string, Rect> VertexDistance = new Dictionary<string, Rect>()
         {
@@ -17,12 +17,12 @@ namespace KSPCommEngr
             { "Left", new Rect(0f, 30f, 0f, 0f) }
         };
 
-        public CommBlockNode LConnectedNode = null;
-        public CommBlockNode RConnectedNode = null;
+        public CommBlock LConnectedNode = null;
+        public CommBlock RConnectedNode = null;
         public Rect[] path;
 
         public Rect Position { get; set; }
-        public CommNodeConnector(Rect pos, CommBlockNode lNode = null, CommBlockNode rNode = null)
+        public CommConnector(Rect pos, CommBlock lNode = null, CommBlock rNode = null)
         {
             Position = pos;
             LConnectedNode = lNode;
@@ -31,7 +31,7 @@ namespace KSPCommEngr
                 DrawConnection();
         }
 
-        public void createConnection(CommBlockNode lNode, CommBlockNode rNode)
+        public void createConnection(CommBlock lNode, CommBlock rNode)
         {
             LConnectedNode = lNode;
             RConnectedNode = rNode;
