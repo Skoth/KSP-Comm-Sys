@@ -29,19 +29,35 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using UnityEngine;
 
 namespace KSPCommEngr
 {
-    // TODO: size mapping from Texture2D to normalized numeric scale (necessary?)
-    public class Signal : ICollection
+    public class Signal : CollectionBase, IEnumerable, IQueryable
     {
-        private Complex[] x;
-        private float[] x_f;
+        private Complex[] x
+        {
+            get { return x; }
+            set
+            {
+                x = value;
+                X = FFT(x);
+            }
+        }
+        private Complex[] X
+        {
+            get { return X; }
+            set
+            {
+                X = value;
+                x = IFFT(X);
+            }
+        }
 
         public Texture2D plot;
 
-        public int Count
+        public int Length
         {
             get
             {
@@ -49,62 +65,38 @@ namespace KSPCommEngr
             }
         }
 
-        // Real Signal
-        public Signal(int Size, Func<float, float> expression)
-        {
-            float step = 1 / (float)Size,
-            N_1 = (float)(Size - 1);
-            int i = 0;
-            for(float f = 0f; f <= N_1; f += step)
-            {
-                x[i] = new Complex(expression(f));
-                ++i;
-            }
-            plot = new Texture2D(x.Length, x.Length);
-        }
-
-        // Complex Signal
-        public Signal(Func<float, float, float> expression)
-        {
-            plot = new Texture2D(x.Length, x.Length);
-        }
-
-
-        public Signal(Complex[] u = null)
-        {
-            plot = new Texture2D(x.Length, x.Length);
-        }
-
-        public object SyncRoot
+        public Expression Expression
         {
             get
             {
-                return this;
+                throw new NotImplementedException();
             }
         }
 
-        public bool IsSynchronized
+        public Type ElementType
         {
             get
             {
-                return false;
+                throw new NotImplementedException();
             }
         }
 
-        public void CopyTo(Array array, int index)
+        public IQueryProvider Provider
         {
-            throw new NotImplementedException();
+            get
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public IEnumerator GetEnumerator()
         {
-            for (int i = 0; i < Count; ++i)
+            for (int i = 0; i < x.Length; ++i)
             {
                 yield return x[i];
             }
         }
 
-        // Indexer
         public Complex this[int i]
         {
             get
@@ -117,11 +109,30 @@ namespace KSPCommEngr
             }
         }
 
+        public Signal(Complex[] v)
+        {
+            x = v;
+            plot = new Texture2D(v.Length, v.Length);
+        }
+
+        public Signal(Func<Complex, Complex> expression = null, int Size = 256)
+        {
+            float step = 1 / (float)Size,
+            N_1 = (float)(Size - 1);
+            int i = 0;
+            for (float f = 0f; f <= N_1; f += step)
+            {
+                x[i] = expression(f);
+                ++i;
+            }
+            plot = new Texture2D(x.Length, x.Length);
+        }
+
         public static Signal operator +(Signal u, Signal v)
         {
             if (u.Count != v.Count) return null;
             Signal w = new Signal();
-            for(int i = 0; i < w.x.Length; ++i)
+            for (int i = 0; i < w.Count; ++i)
             {
                 w[i] = u[i] + v[i];
             }
@@ -132,7 +143,7 @@ namespace KSPCommEngr
         {
             if (u.Count != v.Count) return null;
             Signal w = new Signal();
-            for (int i = 0; i < w.x.Length; ++i)
+            for (int i = 0; i < w.Count; ++i)
             {
                 w[i] = u[i] - v[i];
             }
@@ -149,24 +160,46 @@ namespace KSPCommEngr
             }
             return w;
         }
-        
+
         // Convolution operator
-        public static Signal operator %(Signal u, Signal v)
+        public static Complex[] operator %(Signal u, Signal v)
         {
-            Signal U = FFT(u);
-            Signal V = FFT(v);
-            Signal W = U * V;
+            Complex[] U = FFT(u.x);
+            Complex[] V = FFT(v.x);
+            Complex[] W = U * V;
             return IFFT(W);
         }
 
-        private float[] FFT(Signal u)
+        // TODO: Way to define Signal as Complex collection?
+        private static Complex[] FFT(Complex[] v)
         {
-
+            int N = v.Length;
+            if (N == 1) return v;
+            Complex[] E = FFT(v.Where((element, i) => i % 2 == 0).ToArray());
+            Complex[] O = FFT(v.Where((element, i) => i % 2 != 0).ToArray());
+            Complex[] T = E.Where((element, i) => i == i % N / 2).ToArray();
+            Complex[] U = O.Select((element, i) =>
+                {
+                    float a = Mathf.Cos(-i * 2f * Mathf.PI / N);
+                    float b = Mathf.Sin(-i * 2f * Mathf.PI / N);
+                    return (i == i % N / 2) ? element * new Complex(a, b) : element;
+                }).Where((element, i) => i == i % N / 2).ToArray();
+            Complex[] R = new Complex[Math.Min(U.Length, T.Length)];
+            for (int k = 0; k < R.Length; ++k)
+            {
+                R[k] = T[k] + U[k];
+            }
+            return R;
         }
 
-        public float[] IFFT(Signal x)
+        private static Signal IFFT(Complex[] V)
         {
             return new Signal();
+        }
+
+        public static Signal Transform(Func<Complex, Complex> expression)
+        {
+
         }
     }
 }
