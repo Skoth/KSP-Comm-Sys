@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
 namespace KSPCommEngr
 {
@@ -53,9 +54,23 @@ namespace KSPCommEngr
 
     */
 
-    public class Grid
+    public static class Grid
     {
+        public static float UnitLength = 20f;
 
-        CommBlock[][] v;
+        public static float SnapToGrid(float point)
+        {
+            return ((int)point / (int)UnitLength) * UnitLength;
+        }
+
+        public static float[][] Coordinates = new float[][]
+            {
+                Enumerable.Range(0, 100).Select(x => (float)x).ToArray()
+            };
+            
+        public static float RectToGridCoords(Rect pos)
+        {
+            return 0f;
+        }
     }
 }
