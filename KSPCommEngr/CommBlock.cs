@@ -141,8 +141,9 @@ namespace KSPCommEngr
                 if (offsetPos == null)
                     offsetPos = new Vector2(Mouse.screenPos.x - Position.x, Mouse.screenPos.y - Position.y);
 
-                Position.x = Mouse.screenPos.x - offsetPos.Value.x;
-                Position.y = Mouse.screenPos.y - offsetPos.Value.y;
+                // Utilize grid class for quantizing movement
+                Position.x = Grid.SnapToGrid(Mouse.screenPos.x - offsetPos.Value.x);
+                Position.y = Grid.SnapToGrid(Mouse.screenPos.y - offsetPos.Value.y);
                 UpdateEdgeNodes();
             }
             else guiDepth = 2;
@@ -164,7 +165,8 @@ namespace KSPCommEngr
                 else
                     edgeNodeHovered = false;
 
-                if (edgeNodeHovered && Input.GetMouseButtonDown(0)) {
+                if (edgeNodeHovered && Input.GetMouseButtonDown(0))
+                {
                     screenPt1 = new Vector2(edgeNode.Value.Position.x, (float)Screen.height - edgeNode.Value.Position.y);
                     edgeNodeSelected = true;
                     callDrawEdge = true;
@@ -188,7 +190,7 @@ namespace KSPCommEngr
 
                 if (callDrawEdge)
                 {
-                    GLUtils.DrawConnection(screenPt1 + new Vector2(edgeNode.Value.Position.width/2f, edgeNode.Value.Position.height/2f), Mouse.screenPos, Color.red, 10f);
+                    GLUtils.DrawConnection(screenPt1 + new Vector2(edgeNode.Value.Position.width / 2f, edgeNode.Value.Position.height / 2f), Mouse.screenPos, Color.red, 10f);
                 }
             }
         }
