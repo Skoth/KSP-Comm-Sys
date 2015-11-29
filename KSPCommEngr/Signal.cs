@@ -36,6 +36,7 @@ namespace KSPCommEngr
 {
     public class Signal : CollectionBase, IEnumerable, IQueryable
     {
+        // Discrete time representation
         private Complex[] x
         {
             get { return x; }
@@ -45,6 +46,8 @@ namespace KSPCommEngr
                 X = FFT(x);
             }
         }
+
+        // Discrete frequency representation
         private Complex[] X
         {
             get { return X; }
@@ -109,13 +112,15 @@ namespace KSPCommEngr
             }
         }
 
+
+
         public Signal(Complex[] v)
         {
             x = v;
             plot = new Texture2D(v.Length, v.Length);
         }
 
-        public Signal(Func<Complex, Complex> expression = null, int Size = 256)
+        public Signal(Func<float, Complex> expression = null, int Size = 256)
         {
             float step = 1 / (float)Size,
             N_1 = (float)(Size - 1);
@@ -166,7 +171,10 @@ namespace KSPCommEngr
         {
             Complex[] U = FFT(u.x);
             Complex[] V = FFT(v.x);
-            Complex[] W = U * V;
+            var multQuery = from i in U
+                          from j in V
+                          select i * j;
+            Complex[] W = multQuery.ToArray();
             return IFFT(W);
         }
 
@@ -192,14 +200,14 @@ namespace KSPCommEngr
             return R;
         }
 
-        private static Signal IFFT(Complex[] V)
+        private static Complex[] IFFT(Complex[] V)
         {
-            return new Signal();
+            return new Complex[] { };
         }
 
         public static Signal Transform(Func<Complex, Complex> expression)
         {
-
+            return new Signal(new Complex[]{ });
         }
     }
 }
