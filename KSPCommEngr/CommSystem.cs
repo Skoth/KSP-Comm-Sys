@@ -29,12 +29,16 @@ namespace KSPCommEngr
 
         public void DrawCommSystem()
         {
-            GUI.Box(new Rect(210f, 850f, ((float)Screen.width) - 310f, ((float)Screen.height) - 810f), "System Diagram");
+            GUI.Box(new Rect(210f, 650f, ((float)Screen.width) - 310f, ((float)Screen.height) - 810f), "System Diagram");
 
             foreach (var block in blockDiagram)
             {
                 block.DrawBlockNode();
             }
+
+            // TODO: add horizontal scrollview for node selection along top of commsystem window
+            // TODO: drag and drop placement of block nodes from this horizontal scrollview
+            // TODO: dotted grid matrix as background of comm system for "direct" placement of nodes
         }
 
         public Signal Cursor
@@ -51,12 +55,19 @@ namespace KSPCommEngr
 
         public CommBlock FindDataSource()
         {
-            foreach (var node in blockDiagram)
+            var qDataSource = from block in blockDiagram
+                              where block.Face == nodeFace.DataSource
+                              select block;
+            if (qDataSource.Count() == 1)
             {
-                if (node.Equals(new Object()))
-                    return node;
+                return qDataSource.First();
             }
-            return null;
+            else
+            {
+                CommEngrUtils.Log("Error at CommSystem.FindDataSource(): one data source must be implemented!");
+                return null;
+            }
+
         }
     }
 }
