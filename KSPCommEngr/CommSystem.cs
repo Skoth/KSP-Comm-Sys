@@ -9,6 +9,12 @@ namespace KSPCommEngr
     public class CommSystem
     {
         public List<CommBlock> blockDiagram = new List<CommBlock>();
+        private Vector2 scrollViewVector = Vector2.zero;
+        private float left = 210f;
+        private float top = 650f;
+        private float width = ((float)Screen.width) - 310f;
+        private float height = ((float)Screen.height) - 810f;
+        private string text = "Inside the scrollview element on Unity within Kerbal Space Program";
 
         public CommSystem(XDocument xmlCSDoc = null)
         {
@@ -29,12 +35,19 @@ namespace KSPCommEngr
 
         public void DrawCommSystem()
         {
-            GUI.Box(new Rect(210f, 650f, ((float)Screen.width) - 310f, ((float)Screen.height) - 810f), "System Diagram");
+            GUI.Box(new Rect(left, top, width, height), "System Diagram");
 
             foreach (var block in blockDiagram)
             {
                 block.DrawBlockNode();
             }
+
+            scrollViewVector = GUI.BeginScrollView(new Rect(left + 60f, top + 60f, width - 100f, height - 50f), scrollViewVector, new Rect(left, top, 100f, 100f));
+
+            // Inner scrollView Content
+            text = GUI.TextArea(new Rect(left, top, 100f, 100f), text);
+
+            GUI.EndScrollView();
 
             // TODO: add horizontal scrollview for node selection along top of commsystem window
             // TODO: drag and drop placement of block nodes from this horizontal scrollview
