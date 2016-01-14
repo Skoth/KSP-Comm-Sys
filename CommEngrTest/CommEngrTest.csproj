@@ -54,14 +54,19 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="ComplexTest.cs" />
+    <Compile Include="ComplexTests.cs" />
+    <Compile Include="GraphTests.cs" />
     <Compile Include="SignalTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="NodeTests.cs" />
+    <Compile Include="SearchTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\KSPCommEngr\KSPCommEngr.csproj">
