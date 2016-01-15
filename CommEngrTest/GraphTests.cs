@@ -27,6 +27,8 @@
 
 using KSPCommEngr;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
 
 namespace CommEngrTest
 {
@@ -57,6 +59,23 @@ namespace CommEngrTest
             var distance = graph.Distance(start, goal);
             int expectedDistance = 7;
             Assert.AreEqual(expectedDistance, graph.Distance(start, goal));
+        }
+
+        [TestMethod]
+        public void CrossablePaths()
+        {
+            int expectedCount = 2;
+            Node crossableNode = graph.nodes[6];
+            List<Node> expectedNeighbors = new List<Node>();
+            expectedNeighbors.Add(graph.nodes[5]);
+            expectedNeighbors.Add(graph.nodes[7]);
+
+            Assert.AreEqual(expectedCount, crossableNode.adjacencyList.Count);
+
+            foreach(Node neighbor in crossableNode.adjacencyList)
+            {
+                CollectionAssert.Contains(expectedNeighbors, neighbor);
+            }
         }
     }
 }
