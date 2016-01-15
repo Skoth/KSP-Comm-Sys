@@ -74,11 +74,28 @@ namespace KSPCommEngr
             {
                 for (int c = 0; c < columns; ++c)
                 {
-                    var node = nodes[columns * r + c];
+                    Node node = nodes[columns * r + c];
 
                     // 1 represents unusable node for path, 0 is an available tile
+                    // If the current node in the grid is an obstacle, check if corner
+                    // If not, a crossing formed by parallel neighbors can be created
                     if (grid[r, c] == 1)
                     {
+                        if (r > 0 && r < rows - 1 && c > 0 && c < columns - 1)
+                        {
+                            if (grid[r - 1, c] == 1 && grid[r + 1, c] == 1 &&
+                                grid[r, c - 1] == 0 && grid[r, c + 1] == 0)
+                            {
+                                node.adjacencyList.Add(nodes[columns * r + c + 1]);
+                                node.adjacencyList.Add(nodes[columns * r + c - 1]);
+                            }
+                            else if (grid[r - 1, c] == 0 && grid[r + 1, c] == 0 &&
+                                grid[r, c - 1] == 1 && grid[r, c + 1] == 1)
+                            {
+                                node.adjacencyList.Add(nodes[columns * (r - 1) + c]);
+                                node.adjacencyList.Add(nodes[columns * (r + 1) + c]);
+                            }
+                        }
                         continue;
                     }
 
