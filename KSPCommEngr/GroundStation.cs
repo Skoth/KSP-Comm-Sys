@@ -41,6 +41,7 @@ namespace KSPCommEngr
         private CommSystem groundStationCS = null;
         private CommSystem satelliteCS = null;
         public Texture2D grid;
+        private Texture2D background;
 
         public void Awake()
         {
@@ -49,6 +50,11 @@ namespace KSPCommEngr
 
         public void Start()
         {
+            background = new Texture2D(20, 20);
+            background.SetPixels(Enumerable.Repeat(Color.white, 20 * 20).ToArray());
+            for (int i = 0; i < background.width; i += 5)
+                for (int j = 0; j < background.height; j += 5)
+                    background.SetPixel(i, j, Color.black);
             RenderingManager.AddToPostDrawQueue(0, OnDraw);
             groundStationCS = new CommSystem();
         }
@@ -65,25 +71,13 @@ namespace KSPCommEngr
 
         private void OnDraw()
         {
-            CommEngrUtils.Log("DrawPath()");
-            GLUtils.GLTriangleMap(new Vector3d[]
-            {
-                new Vector3d(0d, 100d, -10d),
-                new Vector3d(50d, 100d, 10d),
-                new Vector3d(-50d, -100d, 0d)
-            }, Color.magenta);
-
             commSystemPosition = GUILayout.Window(commSystemPosition.GetHashCode(), commSystemPosition, CommSystemWindow, "System Overview", HighLogic.Skin.window);
         }
 
         private void CommSystemWindow(int winId)
         {
-            Texture2D tex = new Texture2D(20, 20);
-            tex.SetPixels(Enumerable.Repeat(Color.white, 20*20).ToArray());
-            tex.SetPixels(0, 9, 20, 1, Enumerable.Repeat(Color.black, 5).ToArray());
-            tex.SetPixels(9, 0, 1, 20, Enumerable.Repeat(Color.black, 5).ToArray());
             GUILayout.BeginVertical();
-            GUILayout.Box(tex);
+            GUILayout.Box(background);
             GUILayout.BeginHorizontal();
             GUILayout.Button("Antenna <|");
             GUILayout.Button("Local Oscillator (~)");
