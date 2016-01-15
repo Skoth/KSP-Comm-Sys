@@ -39,8 +39,15 @@ namespace CommEngrTest
     [TestClass]
     public class ComplexTests
     {
-        Complex u = new Complex(4f, 3f);
-        Complex v = new Complex(6f, 8f);
+        private Complex u;
+        private Complex v;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            u = new Complex(4f, 3f);
+            v = new Complex(6f, 8f);
+        }
 
         [TestMethod]
         public void Addition()
