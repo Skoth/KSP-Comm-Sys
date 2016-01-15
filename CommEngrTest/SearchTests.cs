@@ -37,6 +37,7 @@ namespace CommEngrTest
     public class SearchTests
     {
         public Graph graph;
+        public Search search;
 
         [TestInitialize]
         public void Setup()
@@ -49,12 +50,12 @@ namespace CommEngrTest
                 { 1, 1, 1, 0, 0 }  
             };
             graph = new Graph(nodes);
+            search = new Search(graph);
         }
 
         [TestMethod]
-        public void ChooseNodeTest()
+        public void ChooseNode()
         {
-            Search search = new Search(graph);
             Node goal = graph.nodes[graph.nodes.Length - 1];
             search.goalNode = goal;
             List<Node> reachable = new List<Node>();
@@ -68,5 +69,34 @@ namespace CommEngrTest
             optimalNode = graph.nodes[15];
             Assert.AreSame(search.ChooseNode(), optimalNode);
         }
+
+        [TestMethod]
+        public void LineOverlapAllowed()
+        {
+            Node start = graph.nodes[5];
+            Node goal = graph.nodes[7];
+
+            search.Start(start, goal);
+            while (!search.finished)
+            {
+                search.Step();
+            }
+            int expectedPathLength = 3;
+
+            Assert.AreEqual(expectedPathLength, search.path.Count, "Path length not expected size: check the search path: ", search.path);
+        }
+
+        //[TestMethod]
+        //public void MinimumCrossings()
+        //{
+        //    Node start = graph.nodes[5];
+        //    Node goal = graph.nodes[graph.nodes.Length - 1];
+        //    int expectedCrossings = 3;
+
+        //    search.Start(start, goal);
+
+
+        //    Assert.AreEqual(expectedCrossings, 3);
+        //}
     }
 }
