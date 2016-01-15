@@ -49,12 +49,6 @@ namespace KSPCommEngr
             CommEngrUtils.Log("Antenna Prototype OnStart()");
         }
 
-        public void FixedUpdate()
-        {
-            //CommEngrLog.Log("Test Part FixedUpdate()");
-            //Debug.Log("@{ FixedUpdate: Custom Part Live }@");
-        }
-
         public override void OnSave(ConfigNode node)
         {
             PluginConfiguration config = PluginConfiguration.CreateForType<AntennaPrototype>();
