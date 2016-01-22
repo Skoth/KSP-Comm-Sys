@@ -33,6 +33,7 @@ using UnityEngine;
 
 namespace KSPCommEngr
 {
+    // Inspired by Unity 5 2D: Pathfinding lynda.com course by Jesse Freeman
     public class Node
     {
         public List<Node> adjacencyList = new List<Node>();
