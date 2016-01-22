@@ -56,7 +56,7 @@ namespace KSPCommEngr
         {
             rows = grid.GetLength(0);
             columns = grid.GetLength(1);
-            
+
             // Since each node is going to store a reference to its own neighbors,
             // the node data can be kept as a flattened array
             nodes = new Node[grid.Length];
@@ -94,6 +94,23 @@ namespace KSPCommEngr
                             {
                                 node.adjacencyList.Add(nodes[columns * (r - 1) + c]);
                                 node.adjacencyList.Add(nodes[columns * (r + 1) + c]);
+                            }
+                        }
+                        else // Boundary locations
+                        {
+                            // Left or right columns
+                            if ((c == 0 || c == columns - 1) && (r > 0 && r < rows - 1) &&
+                                (grid[r - 1, c] == 0 && grid[r + 1, c] == 0))
+                            {
+                                node.adjacencyList.Add(nodes[columns * (r - 1) + c]);
+                                node.adjacencyList.Add(nodes[columns * (r + 1) + c]);
+                            }
+                            // Top or bottom rows
+                            else if ((r == 0 || r == rows - 1) && (c > 0 && c < columns - 1) &&
+                                (grid[r, c - 1] == 0 && grid[r, c + 1] == 0))
+                            {
+                                node.adjacencyList.Add(nodes[columns * r + c + 1]);
+                                node.adjacencyList.Add(nodes[columns * r + c - 1]);
                             }
                         }
                         continue;
