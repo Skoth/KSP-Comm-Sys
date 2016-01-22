@@ -33,8 +33,11 @@ using UnityEngine;
 
 namespace KSPCommEngr
 {
+    // Inspired by Unity 5 2D: Pathfinding lynda.com course by Jesse Freeman
     public class Search
     {
+        //private List<Node> _path;
+
         public Graph graph;
         public List<Node> reachable;
         public List<Node> explored;
@@ -101,7 +104,8 @@ namespace KSPCommEngr
                 AddAdjacent(node, node.adjacencyList[i]);
             }
         }
-
+        
+        // Critical Section for implementing 3-Node Corner detection
         public void AddAdjacent(Node node, Node adjacent)
         {
             // Populate next possible solutions for Step() with non-goal node
@@ -116,9 +120,7 @@ namespace KSPCommEngr
 
         public Node ChooseNode()
         {
-            return reachable.OrderBy(
-                node => graph.Distance(node, goalNode)
-            ).First();
+            return reachable.OrderBy(node => graph.Distance(node, goalNode)).First();
         }
 
         public bool FindNode(Node node, List<Node> list)
