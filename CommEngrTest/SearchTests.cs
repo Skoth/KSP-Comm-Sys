@@ -44,10 +44,10 @@ namespace CommEngrTest
         {
             int[,] nodes = new int[,] {
                 { 1, 1, 0, 1, 0 },
-                { 0, 1, 0, 1, 1 }, 
+                { 0, 1, 0, 1, 1 },
                 { 1, 1, 0, 0, 0 },
                 { 0, 0, 0, 0, 0 },
-                { 1, 1, 1, 0, 0 }  
+                { 1, 1, 1, 0, 0 }
             };
             graph = new Graph(nodes);
             search = new Search(graph);
@@ -86,17 +86,59 @@ namespace CommEngrTest
             Assert.AreEqual(expectedPathLength, search.path.Count, "Path length not expected size: check the search path: ", search.path);
         }
 
-        //[TestMethod]
-        //public void MinimumCrossings()
-        //{
-        //    Node start = graph.nodes[5];
-        //    Node goal = graph.nodes[graph.nodes.Length - 1];
-        //    int expectedCrossings = 3;
+        [TestMethod]
+        public void BoundaryCrossingsAllowed()
+        {
+            Node start = graph.nodes[5];
+            Node goal = graph.nodes[15];
+            int expectedPathCount = 3;
+            List<Node> expectedPath = new List<Node>
+            {
+                graph.nodes[5],
+                graph.nodes[10],
+                graph.nodes[15]
+            };
 
-        //    search.Start(start, goal);
+            search.Start(start, goal);
+            while(!search.finished)
+            {
+                search.Step();
+            }
 
+            Assert.AreEqual(expectedPathCount, search.path.Count, 
+                String.Format("Expected path count: {0}; Search result path count: {1}.", 
+                    expectedPathCount, search.path.Count));
+            foreach(var node in search.path)
+            {
+                CollectionAssert.Contains(expectedPath, node);
+            }
+        }
 
-        //    Assert.AreEqual(expectedCrossings, 3);
-        //}
+        [TestMethod]
+        public void MinimumCorners()
+        {
+            Node start = graph.nodes[5];
+            Node goal = graph.nodes[18];
+            List<Node> expectedPath = new List<Node> {
+                graph.nodes[5],
+                graph.nodes[10],
+                graph.nodes[15],
+                graph.nodes[16],
+                graph.nodes[17],
+                graph.nodes[18]
+            };
+
+            search.Start(start, goal);
+            while (!search.finished)
+            {
+                search.Step();
+            }
+
+            foreach(var node in search.path)
+            {
+                CollectionAssert.Contains(expectedPath, node, 
+                    "Node not in expected path (node, search path):", search.path);
+            }
+        }
     }
 }
