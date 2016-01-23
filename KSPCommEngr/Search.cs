@@ -45,6 +45,7 @@ namespace KSPCommEngr
         public Node goalNode;
         public int iterations;
         public bool finished;
+        public IEnumerable<int> tempVals;
 
         public Search(Graph g)
         {
@@ -73,7 +74,7 @@ namespace KSPCommEngr
         {
             if (path.Count > 0) return;
 
-            if(reachable.Count == 0)
+            if (reachable.Count == 0)
             {
                 finished = true;
                 return;
@@ -85,9 +86,9 @@ namespace KSPCommEngr
             var node = ChooseNode();
 
             // Check if node is goal, if it is, fill out path with previous nodes
-            if(node == goalNode)
+            if (node == goalNode)
             {
-                while(node != null)
+                while (node != null)
                 {
                     path.Insert(0, node);
                     node = node.previous;
@@ -99,20 +100,17 @@ namespace KSPCommEngr
             reachable.Remove(node);
             explored.Add(node);
 
-            for(var i = 0; i < node.adjacencyList.Count; ++i)
+            for (var i = 0; i < node.adjacencyList.Count; ++i)
             {
                 AddAdjacent(node, node.adjacencyList[i]);
             }
         }
-        
+
         // Critical Section for implementing 3-Node Corner detection
         public void AddAdjacent(Node node, Node adjacent)
         {
-            // Populate next possible solutions for Step() with non-goal node
-            if(FindNode(adjacent, explored) || FindNode(adjacent, reachable))
-            {
+            if (explored.Contains(adjacent) || reachable.Contains(adjacent))
                 return;
-            }
 
             adjacent.previous = node;
             reachable.Add(adjacent);
@@ -120,24 +118,30 @@ namespace KSPCommEngr
 
         public Node ChooseNode()
         {
-            return reachable.OrderBy(node => graph.Distance(node, goalNode)).First();
+            tempVals = reachable.Select(node => CornerHeuristic(node) + graph.Distance(node, goalNode));
+            return reachable.OrderBy(node => CornerHeuristic(node) + graph.Distance(node, goalNode)).First();
         }
 
-        public bool FindNode(Node node, List<Node> list)
+        private int CornerHeuristic(Node node)
         {
-            return GetNodeIndex(node, list) >= 0;
-        }
-
-        public int GetNodeIndex(Node node, List<Node> list)
-        {
-            for (int i = 0; i < list.Count; ++i)
+            if (node.previous != null)
             {
-                if(node == list[i])
+                if (node.previous.previous != null)
                 {
-                    return i;
+                    if ((node.previous.Id == node.Id + graph.columns && node.previous.previous.Id == node.Id + graph.columns - 1) || // 1
+                        (node.previous.Id == node.Id + graph.columns && node.previous.previous.Id == node.Id + graph.columns + 1) || // 2
+                        (node.previous.Id == node.Id - graph.columns && node.previous.previous.Id == node.Id - graph.columns - 1) || // 3
+                        (node.previous.Id == node.Id - graph.columns && node.previous.previous.Id == node.Id - graph.columns + 1) || // 4
+                        (node.previous.Id == node.Id + 1 && node.previous.previous.Id == node.Id + 1 - graph.columns) || // 5
+                        (node.previous.Id == node.Id - 1 && node.previous.previous.Id == node.Id - 1 - graph.columns) || // 6
+                        (node.previous.Id == node.Id + 1 && node.previous.previous.Id == node.Id + 1 + graph.columns) || // 7
+                        (node.previous.Id == node.Id - 1 && node.previous.previous.Id == node.Id - 1 + graph.columns))   // 8
+                    {
+                        return 50;
+                    }
                 }
             }
-            return -1;
+            return 0;
         }
     }
 }
