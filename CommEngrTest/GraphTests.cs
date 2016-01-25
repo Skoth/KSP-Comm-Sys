@@ -77,5 +77,47 @@ namespace CommEngrTest
                 CollectionAssert.Contains(expectedNeighbors, neighbor);
             }
         }
+
+        [TestMethod]
+        public void UpdateGraphObstacles()
+        {
+            Graph graph = new Graph(new int[,] {
+                { 0, 0, 0, 0, 0 },
+                { 0, 0, 0, 0, 0 },
+                { 0, 0, 0, 0, 0 },
+                { 0, 0, 0, 0, 0 },
+                { 0, 0, 0, 0, 0 }
+            });
+            Graph expectedGraph = new Graph(new int[,] {
+                { 0, 0, 0, 0, 0 },
+                { 0, 1, 1, 1, 0 },
+                { 0, 1, 1, 1, 0 },
+                { 0, 1, 1, 1, 0 },
+                { 0, 0, 0, 0, 0 }
+            });
+
+            Search search = new Search(graph);
+            search.Start(graph.nodes[0], graph.nodes[12]);
+            while (!search.finished)
+            {
+                search.Step();
+            }
+
+            // User Drag and Drop Event
+            Assert.AreEqual<Graph>(graph.Update(), expectedGraph);
+
+            CollectionAssert.AreEqual(expectedGraph.nodes, graph.nodes);
+
+            // If assertion passes without re-instantiating, graph is passed as reference (which is preferred)
+            //search = new Search(graph);
+
+            // Verify that center node is now unreachable
+            search.Start(graph.nodes[0], graph.nodes[12]);
+            while(!search.finished)
+            {
+                search.Step();
+            }
+            Assert.AreEqual(0, search.path.Count);
+        }
     }
 }
