@@ -33,30 +33,24 @@ using UnityEngine;
 
 namespace KSPCommEngr
 {
-    /*
-    
-        Legend: + : Node; -,| : Block Boundary; =,| : Connector
-
-        +   + = + = + = +   +   +
-            |           |
-        +   +   +   + - + - +   +
-            |       |       |
-        + - + - +   +   +   + = +
-        |       |   |       |   |
-        +   +   +   + - + - +   +   
-        |       |               |
-        + - + - +   +   +   +   +
-            |                   |
-        +   + = + = + = + = + = +
-
-        Specifications: Blocks have an area of 3 x 3 u^2
-
-
-    */
-
     public static class Grid
     {
-        public static float UnitLength = 20f;
+        private static int width = 100;
+        private static int height = 100;
+        private static int[,] grid = new int[width,height];
+        public static readonly float UnitLength = 20f;
+
+        public static int[,] Instance { get { return grid; } }
+
+        public static void ModifyGrid(bool set, params Rect[] positions)
+        {
+            int indices = 0;
+            foreach(var position in positions)
+            {
+                indices = RectToGridCoords(position);
+                
+            }
+        }
 
         public static float SnapToGrid(float point)
         {
@@ -67,10 +61,10 @@ namespace KSPCommEngr
             {
                 Enumerable.Range(0, 100).Select(x => (float)x).ToArray()
             };
-            
-        public static float RectToGridCoords(Rect pos)
+
+        private static int RectToGridCoords(Rect pos)
         {
-            return 0f;
+            return 0;
         }
     }
 }
