@@ -69,8 +69,6 @@ namespace KSPCommEngr
         private bool edgeNodeSelected = false;
         private int guiDepth = 2;
         private static Vector2 screenPt1;
-        private static Vector2 screenPt2;
-        private static Rect initPos;
         private bool callDrawEdge;
 
         public Func<float, float> TransferFunction;

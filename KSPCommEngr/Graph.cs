@@ -41,6 +41,7 @@ namespace KSPCommEngr
         public int rows = 0;
         public int columns = 0;
         public Node[] nodes;
+        public int[,] grid;
 
         public int Distance(Node x, Node y)
         {
@@ -52,7 +53,13 @@ namespace KSPCommEngr
         }
 
         // Grid that forms tile map
-        public Graph(int[,] grid)
+        public Graph()
+        {
+            grid = Grid.Instance;
+            SetupNeighbors();
+        }
+
+        private void SetupNeighbors()
         {
             rows = grid.GetLength(0);
             columns = grid.GetLength(1);
@@ -141,6 +148,12 @@ namespace KSPCommEngr
                     }
                 }
             }
+        }
+
+        private Graph Update()
+        {
+
+            return this;
         }
     }
 }
