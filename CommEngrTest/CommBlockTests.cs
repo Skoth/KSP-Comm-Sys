@@ -29,5 +29,14 @@ namespace CommEngrTest
 
             CollectionAssert.AreEqual(expectedGraph.nodes, graph.nodes);
         }
+
+        [TestMethod]
+        public void TransformSignal()
+        {
+            ITransform lpf = new CommBlock(nodeFace.LowpassFilter, new UnityEngine.Rect(0f, 0f, 0f, 0f));
+            Signal x = new Signal();
+            Signal y = lpf.TransferFunction(x);
+            Assert.AreNotEqual(x, y);
+        }
     }
 }
