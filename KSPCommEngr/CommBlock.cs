@@ -33,6 +33,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using KSP;
 using KSPCommEngr.Extensions;
+using KSPCommEngr;
 
 namespace KSPCommEngr
 {
@@ -50,7 +51,7 @@ namespace KSPCommEngr
     }
 
     // Non-GUI ops specified in IVertex interface
-    public class CommBlock
+    public class CommBlock : ITransform
     {
         public nodeFace Face { get; set; }
         public Texture2D Icon;
@@ -204,6 +205,11 @@ namespace KSPCommEngr
                     EdgeNodes[edgeNode.Key].Position.height
                 );
             }
+        }
+
+        Signal ITransform.TransferFunction(params Signal[] input)
+        {
+            return TransferFunction(input);
         }
     }
 }
