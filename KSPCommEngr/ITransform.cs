@@ -32,8 +32,8 @@ using System.Text;
 
 namespace KSPCommEngr
 {
-    interface ITransform<T>
+    public interface ITransform
     {
-        T TransferFunction(params T[] input);
+        Signal TransferFunction(params Signal[] input);
     }
 }

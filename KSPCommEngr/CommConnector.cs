@@ -62,8 +62,6 @@ namespace KSPCommEngr
         {
             LConnectedNode = lNode;
             RConnectedNode = rNode;
-            //CommSystem.VertexLayer.Validate();
-            //CommSystem.EdgeLayer.Validate();
         }
 
         private void DrawConnection()

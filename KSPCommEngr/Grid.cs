@@ -38,7 +38,7 @@ namespace KSPCommEngr
         private static int width = 100;
         private static int height = 100;
         private static int[,] grid = new int[width,height];
-        public static readonly float UnitLength = 20f;
+        public static readonly float PixelUnitLength = 20f;
 
         public static int[,] Instance { get { return grid; } }
 
@@ -54,7 +54,7 @@ namespace KSPCommEngr
 
         public static float SnapToGrid(float point)
         {
-            return ((int)point / (int)UnitLength) * UnitLength;
+            return ((int)point / (int)PixelUnitLength) * PixelUnitLength;
         }
 
         public static float[][] Coordinates = new float[][]
